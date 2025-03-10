@@ -1,0 +1,42 @@
+---
+title: "Singapore Weather Analytics"
+subtitle: "Project Proposal"
+date: "10 March 2025"
+date-modified: "last-modified"
+execute: 
+  echo: true
+  eval: true
+  warning: false
+  message: false
+  freeze: true
+---
+
+# Overview & Motivation
+
+# Problem Statement
+
+# Objectives
+
+# Data
+
+# Methodology & Analytical Approach
+
+## 1 Data Wrangling
+
+## 2 Analytic Techniques - 
+
+### 2.1 Exploratory Data Analysis
+
+### 2.2 Time Series Analysis and Forecasting
+
+### 2.3 Geo-spatial Analysis
+
+# Prototype Sketches
+
+About Shiny App
+
+# R Packages
+
+# Project Schedule
+
+Gantt Chart

@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2025-03-10">
 
-<title>Visual Analytics Project - Singapore Weather – ISSS608-G6</title>
+<title>Singapore Weather Analytics – ISSS608-G6</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,22 +24,22 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -68,7 +69,7 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../styles.css">
 </head>
 
 <body class="nav-fixed">
@@ -78,7 +79,7 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">ISSS608-G6</span>
     </a>
   </div>
@@ -89,15 +90,15 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./Proposal/Proposal.html"> 
+    <a class="nav-link active" href="../Proposal/Proposal.html" aria-current="page"> 
 <span class="menu-text">Project Proposal</span></a>
   </li>  
 </ul>
@@ -111,15 +112,38 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview-motivation" id="toc-overview-motivation" class="nav-link active" data-scroll-target="#overview-motivation">Overview &amp; Motivation</a></li>
+  <li><a href="#problem-statement" id="toc-problem-statement" class="nav-link" data-scroll-target="#problem-statement">Problem Statement</a></li>
+  <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">Objectives</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
+  <li><a href="#methodology-analytical-approach" id="toc-methodology-analytical-approach" class="nav-link" data-scroll-target="#methodology-analytical-approach">Methodology &amp; Analytical Approach</a>
+  <ul class="collapse">
+  <li><a href="#data-wrangling" id="toc-data-wrangling" class="nav-link" data-scroll-target="#data-wrangling">1 Data Wrangling</a></li>
+  <li><a href="#analytic-techniques--" id="toc-analytic-techniques--" class="nav-link" data-scroll-target="#analytic-techniques--">2 Analytic Techniques -</a>
+  <ul class="collapse">
+  <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link" data-scroll-target="#exploratory-data-analysis">2.1 Exploratory Data Analysis</a></li>
+  <li><a href="#time-series-analysis-and-forecasting" id="toc-time-series-analysis-and-forecasting" class="nav-link" data-scroll-target="#time-series-analysis-and-forecasting">2.2 Time Series Analysis and Forecasting</a></li>
+  <li><a href="#geo-spatial-analysis" id="toc-geo-spatial-analysis" class="nav-link" data-scroll-target="#geo-spatial-analysis">2.3 Geo-spatial Analysis</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#prototype-sketches" id="toc-prototype-sketches" class="nav-link" data-scroll-target="#prototype-sketches">Prototype Sketches</a></li>
+  <li><a href="#r-packages" id="toc-r-packages" class="nav-link" data-scroll-target="#r-packages">R Packages</a></li>
+  <li><a href="#project-schedule" id="toc-project-schedule" class="nav-link" data-scroll-target="#project-schedule">Project Schedule</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Visual Analytics Project - Singapore Weather</h1>
+<h1 class="title">Singapore Weather Analytics</h1>
+<p class="subtitle lead">Project Proposal</p>
 </div>
 
 
@@ -127,7 +151,19 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-title-meta">
 
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 10, 2025</p>
+    </div>
+  </div>
   
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">March 10, 2025</p>
+    </div>
+  </div>
     
   </div>
   
@@ -136,9 +172,49 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This is the home page.</p>
+<section id="overview-motivation" class="level1">
+<h1>Overview &amp; Motivation</h1>
+</section>
+<section id="problem-statement" class="level1">
+<h1>Problem Statement</h1>
+</section>
+<section id="objectives" class="level1">
+<h1>Objectives</h1>
+</section>
+<section id="data" class="level1">
+<h1>Data</h1>
+</section>
+<section id="methodology-analytical-approach" class="level1">
+<h1>Methodology &amp; Analytical Approach</h1>
+<section id="data-wrangling" class="level2">
+<h2 class="anchored" data-anchor-id="data-wrangling">1 Data Wrangling</h2>
+</section>
+<section id="analytic-techniques--" class="level2">
+<h2 class="anchored" data-anchor-id="analytic-techniques--">2 Analytic Techniques -</h2>
+<section id="exploratory-data-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="exploratory-data-analysis">2.1 Exploratory Data Analysis</h3>
+</section>
+<section id="time-series-analysis-and-forecasting" class="level3">
+<h3 class="anchored" data-anchor-id="time-series-analysis-and-forecasting">2.2 Time Series Analysis and Forecasting</h3>
+</section>
+<section id="geo-spatial-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="geo-spatial-analysis">2.3 Geo-spatial Analysis</h3>
+</section>
+</section>
+</section>
+<section id="prototype-sketches" class="level1">
+<h1>Prototype Sketches</h1>
+<p>About Shiny App</p>
+</section>
+<section id="r-packages" class="level1">
+<h1>R Packages</h1>
+</section>
+<section id="project-schedule" class="level1">
+<h1>Project Schedule</h1>
+<p>Gantt Chart</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

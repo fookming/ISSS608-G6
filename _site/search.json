@@ -12,5 +12,26 @@
     "title": "Visual Analytics Project - Singapore Weather",
     "section": "",
     "text": "This is the home page."
+  },
+  {
+    "objectID": "Proposal/Proposal.html",
+    "href": "Proposal/Proposal.html",
+    "title": "Singapore Weather Analytics",
+    "section": "",
+    "text": "Motivation\n\n\nObjectives\n\n\nData\n\n\nMethodology & Analytical Approach\n\n\nPrototype Sketches\n\n\nR Packages\n\n\nProject Schedule"
+  },
+  {
+    "objectID": "Proposal/Proposal.html#data-wrangling",
+    "href": "Proposal/Proposal.html#data-wrangling",
+    "title": "Singapore Weather Analytics",
+    "section": "1 Data Wrangling",
+    "text": "1 Data Wrangling"
+  },
+  {
+    "objectID": "Proposal/Proposal.html#analytic-techniques--",
+    "href": "Proposal/Proposal.html#analytic-techniques--",
+    "title": "Singapore Weather Analytics",
+    "section": "2 Analytic Techniques -",
+    "text": "2 Analytic Techniques -\n\n2.1 Exploratory Data Analysis\n\n\n2.2 Time Series Analysis and Forecasting\n\n\n2.3 Geo-spatial Analysis"
   }
 ]
