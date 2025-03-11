@@ -1,9 +1,4 @@
 ---
-title: "Visual Analytics Project - Singapore Weather"
+title: "WeatherWise Singapore"
+subtitle: "Visual Analytics For Unveiling Singapore's Evolving Climate"
 ---
-
-This is the home page.
-
-```{r}
-
-```

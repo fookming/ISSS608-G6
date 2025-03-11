@@ -4,18 +4,18 @@ project:
 website:
   title: "ISSS608-G6"
   navbar:
-    left:
-      - href: index.qmd
-        text: Home
-      - about.qmd
+    right:
       - href: "Proposal/Proposal.html"
-        text: "Project Proposal"
-
+        text: "Proposal"
+      - text: "Discovery"
+      - text: "Shiny App"
+      - text: "Poster"
+      - href: "about.html"
+        text: "Team"
 format:
   html:
     theme:
-      - cosmo
-      - brand
+      - minty
     css: styles.css
     toc: true
 

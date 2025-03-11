@@ -1,9 +1,11 @@
 ---
-title: "About"
+title: "The Team"
 ---
 
-About this site
+We developed this project for **ISSS608** (Visual Analytics and Applications) course of Masters of IT in Business (MITB) in [Singapore Management University](https://www.smu.edu.sg/) under the guidance of [Dr. Kam Tin Seong](https://faculty.smu.edu.sg/profile/kam-tin-seong-486), Associate Professor of Information Systems during the Academic Year 2024-25.
 
-```{r}
-1 + 1
-```
+**Members**
+
+-   Ee Fook Ming
+-   Nguyen Bao Thu Phuong
+-   Shreya Agarwal
