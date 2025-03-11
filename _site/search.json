@@ -18,7 +18,7 @@
     "href": "Proposal/Proposal.html",
     "title": "Singapore Weather Analytics",
     "section": "",
-    "text": "Motivation\n\n\nObjectives\n\n\nData\n\n\nMethodology & Analytical Approach\n\n\nPrototype Sketches\n\n\nR Packages\n\n\nProject Schedule"
+    "text": "Singapore’s tropical climate, characterized by consistently high temperatures, high humidity, and intense rainfall, presents distinct environmental conditions and significant operational challenges. Accurate and detailed weather analytics are essential for effective decision-making in various sectors such as urban planning, real estate investment, insurance, agriculture, and infrastructure management.\nThe motivation for this project is to develop a standalone, comprehensive weather data and visual analytics platform tailored specifically to Singapore’s unique climate conditions. The platform will provide integrated, detailed, and interactive weather analytics, empowering diverse stakeholders including businesses, policymakers, and researchers to independently analyse data and generate relevant insights aligned with their specific needs.\nAdditionally, the platform will incorporate robust statistical methods, spatial visualizations, and advanced predictive modelling tools. These analytical capabilities will empower businesses, researchers, and policymakers to independently derive actionable insights, thereby enhancing strategic climate resilience decision-making. By balancing specialized climate data provision with generalized applicability, the platform will serve diverse informational needs without being restricted to any specific industry."
   },
   {
     "objectID": "Proposal/Proposal.html#data-wrangling",

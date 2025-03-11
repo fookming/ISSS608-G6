@@ -13,9 +13,29 @@ execute:
 
 # Overview & Motivation
 
-# Problem Statement
+Singapore's tropical climate, characterized by consistently high temperatures, high humidity, and intense rainfall, presents distinct environmental conditions and significant operational challenges. Accurate and detailed weather analytics are essential for effective decision-making in various sectors such as urban planning, real estate investment, insurance, agriculture, and infrastructure management.
+
+The motivation for this project is to develop a standalone, comprehensive weather data and visual analytics platform tailored specifically to Singapore’s unique climate conditions. The platform will provide integrated, detailed, and interactive weather analytics, empowering diverse stakeholders including businesses, policymakers, and researchers to independently analyse data and generate relevant insights aligned with their specific needs.
+
+Additionally, the platform will incorporate robust statistical methods, spatial visualizations, and advanced predictive modelling tools. These analytical capabilities will empower businesses, researchers, and policymakers to independently derive actionable insights, thereby enhancing strategic climate resilience decision-making. By balancing specialized climate data provision with generalized applicability, the platform will serve diverse informational needs without being restricted to any specific industry.
 
 # Objectives
+
+**Establish a Comprehensive Weather Analytics Platform**
+
+The platform will combine historical and current weather data from the Meteorological Service Singapore (MSS), covering temperature, rainfall, humidity, wind, and other important weather factors. The information will be clearly organized by location and time, making it easy to analyse detailed weather conditions for specific areas and periods.
+
+**Develop Advanced Visual Analytics**\
+\
+The platform will provide advanced interactive geospatial visualizations, including heat maps, rainfall distribution plots, urban heat island visualizations, and flood-risk overlays. It will also offer tools for interactive exploration of historical weather data, enabling users to effectively identify patterns, trends, and anomalies.
+
+**Integrate Robust Analytic and Predictive Capabilities**\
+\
+The platform will use advanced statistical techniques to identify trends, detect unusual weather patterns, and forecast future conditions. It will also allow users to simulate different weather scenarios to better understand possible climate conditions and outcomes.
+
+**Enable Independent and Flexible Utilization Across Multiple Sectors**\
+\
+The platform will be easy to use, enabling users from various sectors such as business, academia, and government to independently analyse weather data according to their specific needs. It will offer adaptable analytic tools that support practical decision-making and strategic planning in different contexts.
 
 # Data
 
@@ -23,7 +43,7 @@ execute:
 
 ## 1 Data Wrangling
 
-## 2 Analytic Techniques - 
+## 2 Analytic Techniques -
 
 ### 2.1 Exploratory Data Analysis
 
@@ -40,3 +60,5 @@ About Shiny App
 # Project Schedule
 
 Gantt Chart
+
+![](images/clipboard-3410450948.png)
