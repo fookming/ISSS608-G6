@@ -26,9 +26,121 @@ Importance of incorporating geospatial analysis in visual analysis for time seri
 # Install R packages
 
 ```{r}
-pacman::p_load(tidyverse)
+pacman::p_load(tidyverse, DT ,tmap, sf, sfdep, corrplot)
+```
+
+# Data Wrangling
+
+## Data Import and Preparation
+
+### Daily Weather Records
+
+First we read in the daily weather records scraped from weather.gov.sg into tibble dataframe `climate_raw` using `read_csv()` .
+
+```{r}
+climate_raw = read_csv("WebScraping/data/climate_historical_daily_records/Climate_Data_2015_2024.csv")
+```
+
+### Weather Station Records
+
+```{r}
+station = read_csv("WebScraping/data/Station_Records.csv") |>
+  filter(Station_Type != "Closed Station")
+```
+
+Check duplicate
+
+```{r}
+duplicate <- station %>% 
+  group_by_all() %>% 
+  filter(n()>1) %>% 
+  ungroup()
+  
+duplicate
+```
+
+### Master Plan Subzone Boundary
+
+```{r}
+mpsz = st_read(dsn = "Geospatial/data", layer = "MP14_SUBZONE_WEB_PL")
+```
+
+## Data Wrangling
+
+Filter daily weather data for active stations only
+
+```{r}
+climate = inner_join(station,climate_raw, by = "Station")
+```
+
+Check duplicate
+
+```{r}
+duplicate <- climate %>% 
+  group_by_all() %>% 
+  filter(n()>1) %>% 
+  ungroup()
+  
+duplicate
+```
+
+The output shows there is no duplicate in `climate` dataframe.
+
+Next we select relevant columns for further geospatial analysis
+
+```{r}
+climate = climate |>
+  select(c(Station, Station_Type, Year, Month, Day, `Daily Rainfall Total (mm)`, `Mean Temperature (Celsius)`, `Mean Wind Speed (km/h)`))
+```
+
+Since there are stations that only measure rainfall, we split into two dataframes:
+
+-   `climate_rain`: include all stations and only measurement on `Daily Rainfall Total (mm)`
+
+-   `climate_temperature_wind`: include only full AWS stations and only measurements on `Mean Temperature (Celsius)` and `Mean Wind Speed (km/h)`.
+
+```{r}
+climate_rain = climate |>
+  select(c(Station, Station_Type, Year, Month, Day, `Daily Rainfall Total (mm)`))
+summary(climate_rain)
 ```
 
 ```{r}
-climate_raw = read_csv("WebScraping/data/climate_historical_daily_records/Climate_Data_2015_2024_v3.csv")
+climate_temperature_wind = climate |>
+  select(c(Station, Station_Type, Year, Month, Day, `Mean Temperature (Celsius)`, `Mean Wind Speed (km/h)`)) |>
+  filter(Station_Type == "Full AWS Station")
+
+summary(climate_temperature_wind)
+```
+
+There are many null values in all three measurements, we continue to explore from which stations and year, month those null records come from.
+
+```{r}
+# Count missing values for each Station, Year, and Month
+missing_rain_counts <- climate_rain %>%
+  group_by(Station, Year, Month) %>%
+  summarise(
+    `Missing Daily Rainfall Total` = sum(is.na(`Daily Rainfall Total (mm)`))
+  ) %>%
+  # Exclude rows where all missing counts are zero
+  filter(`Missing Daily Rainfall Total` > 0)
+
+# # Display using datatable
+# datatable(missing_rain_counts, options = list(pageLength = 10), rownames = FALSE)
+```
+
+```{r}
+# Count missing values for each Station, Year, and Month
+missing_rain_counts <- climate_temperature_wind %>%
+  group_by(Station, Year, Month) %>%
+  summarise(
+    `Missing Mean Temperature` = sum(is.na(`Mean Temperature (Celsius)`)),
+    `Missing Mean Wind Speed` = sum(is.na(`Mean Wind Speed (km/h)`))
+  ) %>%
+  # Exclude rows where all missing counts are zero
+  filter(`Missing Mean Temperature` > 0 | 
+         `Missing Mean Wind Speed` > 0)
+
+# # Display using datatable
+# datatable(missing_rain_counts, options = list(pageLength = 10), rownames = FALSE)
 ```
