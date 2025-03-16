@@ -1,0 +1,34 @@
+---
+title: "Geospatial Analysis of Singapore Weather Data"
+author: "Nguyen Bao Thu Phuong"
+date: "18 March 2025" 
+date-modified: "last-modified"
+execute:
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+  warning: false
+---
+
+# Overview
+
+Importance of incorporating geospatial analysis in visual analysis for time series weather data
+
+## The Data
+
+-   Scraped weather data from
+
+-   Weather Station records
+
+-   Singapore Master Plan 2019 Subzone Boundary
+
+# Install R packages
+
+```{r}
+pacman::p_load(tidyverse)
+```
+
+```{r}
+climate_raw = read_csv("WebScraping/data/climate_historical_daily_records/Climate_Data_2015_2024_v3.csv")
+```
