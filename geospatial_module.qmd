@@ -21,7 +21,7 @@ Importance of incorporating geospatial analysis in visual analysis for time seri
 
 -   Weather Station records
 
--   Singapore Master Plan 2019 Subzone Boundary
+-   Singapore Master Plan 2014 Subzone Boundary
 
 # Install R packages
 
@@ -123,24 +123,39 @@ missing_rain_counts <- climate_rain %>%
     `Missing Daily Rainfall Total` = sum(is.na(`Daily Rainfall Total (mm)`))
   ) %>%
   # Exclude rows where all missing counts are zero
-  filter(`Missing Daily Rainfall Total` > 0)
+  filter(`Missing Daily Rainfall Total` > 0) |>
+  ungroup()
+```
 
-# # Display using datatable
-# datatable(missing_rain_counts, options = list(pageLength = 10), rownames = FALSE)
+```{r}
+# Count the number of months per station where missing days exceed 15
+missing_rain_summary <- missing_rain_counts %>%
+  filter(`Missing Daily Rainfall Total` >= 15) %>%
+  group_by(Station, Year) %>%
+  summarise(Count_Months = n()) %>%
+  arrange(Year)|>
+  pivot_wider(names_from = Year, values_from = Count_Months) |>
+  ungroup()
 ```
 
 ```{r}
 # Count missing values for each Station, Year, and Month
-missing_rain_counts <- climate_temperature_wind %>%
+missing_temp_counts <- climate_temperature_wind %>%
   group_by(Station, Year, Month) %>%
   summarise(
-    `Missing Mean Temperature` = sum(is.na(`Mean Temperature (Celsius)`)),
-    `Missing Mean Wind Speed` = sum(is.na(`Mean Wind Speed (km/h)`))
-  ) %>%
+    `Missing Mean Temperature` = sum(is.na(`Mean Temperature (Celsius)`))) %>%
   # Exclude rows where all missing counts are zero
-  filter(`Missing Mean Temperature` > 0 | 
-         `Missing Mean Wind Speed` > 0)
+  filter(`Missing Mean Temperature` > 0) |>
+  ungroup()
+```
 
-# # Display using datatable
-# datatable(missing_rain_counts, options = list(pageLength = 10), rownames = FALSE)
+```{r}
+# Count the number of months per station where missing days exceed 20
+missing_temp_summary <- missing_temp_counts %>%
+   filter(`Missing Mean Temperature` >= 15) %>%
+  group_by(Station, Year) %>%
+  summarise(Count_Months = n()) %>%
+  arrange(Year)|>
+  pivot_wider(names_from = Year, values_from = Count_Months) |>
+  ungroup()
 ```
