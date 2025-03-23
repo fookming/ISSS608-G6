@@ -1,0 +1,213 @@
+---
+title: "Data Preparation"
+author: "Nguyen Bao Thu Phuong & Shreya Agarwal"
+date: "28 March 2025" 
+date-modified: "last-modified"
+execute:
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+  warning: false
+---
+
+# Overview
+
+Data Preparation for final use
+
+## The Data
+
+-   Scraped weather data and weather stations records
+
+# Install R packages
+
+```{r}
+pacman::p_load(tidyverse)
+```
+
+# Data Wrangling
+
+## Data Import and Preparation
+
+### Daily Weather Records
+
+First we read in the daily weather records scraped from weather.gov.sg into tibble dataframe `climate_raw` using `read_csv()` .
+
+```{r}
+climate_raw = read_csv("data/climate_historical_daily_records/Climate_Data_2015_2024.csv")
+```
+
+### Weather Station Records
+
+We only want to consider Full AWS stations since it contains data for all different weather parameters. Many other stations are classified as "Close Stations", "Daily Rainfall Stations" (only rainfall metrics) etc which we are not considering for our deeper analysis.
+
+```{r}
+# Read station metadata and filter for Full AWS stations
+station = read_csv("data/Station_Records.csv") |> 
+  filter(Station_Type == "Full AWS Station")
+```
+
+Check duplicate
+
+```{r}
+duplicate <- station %>%    
+  group_by_all() %>%    
+  filter(n()>1) %>%    
+  ungroup()
+
+duplicate
+```
+
+## Data Wrangling
+
+### Join both tables
+
+Filter daily weather data for active AWS stations only and join the 2 datasets.
+
+```{r}
+# Join to retain only Full AWS station records
+climate = inner_join(station,climate_raw, by = "Station")
+```
+
+Check for duplicates
+
+```{r}
+duplicate <- climate %>%    
+  group_by_all() %>%    
+  filter(n()>1) %>%    
+  ungroup()    
+
+duplicate
+```
+
+The output shows there is no duplicate in `climate` dataframe.
+
+### Filter climate dataset for only key parameters
+
+Next we select only the relevant columns for our weather analysis
+
+```{r}
+# Select relevant columns
+climate <- climate |> 
+  select(Station, Station_Type, Year, Month, Day,
+         `Daily Rainfall Total (mm)`,
+         `Mean Temperature (Celsius)`,
+         `Maximum Temperature (Celsius)`,
+         `Minimum Temperature (Celsius)`,
+         `Mean Wind Speed (km/h)`)
+```
+
+Now we only have 10 columns and 5 weather parameters we want to further perform our analysis on.
+
+### Count months per station with missing values for Daily Rainfall
+
+```{r}
+# Count missing values for each Station, Year, and Month 
+missing_rain_counts <- climate %>%   
+  group_by(Station, Year, Month) %>%   
+  summarise(
+    `Missing Daily Rainfall Total` = sum(is.na(`Daily Rainfall Total (mm)`))   ) %>%  
+    # Exclude rows where all missing counts are zero
+  filter(`Missing Daily Rainfall Total` > 0) |>
+  ungroup()
+```
+
+```{r}
+# Count the number of months per station where missing days exceed 15 
+missing_rain_summary <- missing_rain_counts %>%   
+  filter(`Missing Daily Rainfall Total` >= 15) %>%   
+  group_by(Station, Year) %>%   
+  summarise(Count_Months = n()) %>%   
+  arrange(Year)|>   
+  pivot_wider(names_from = Year, values_from = Count_Months) |>   
+  ungroup()
+```
+
+Observations - Rainfall has 7 stations with \>15 days of missing data for months over the years. Also observed that some stations eg - Semakau Island has a full year of missing data record. 2015-2017 specially has a lot of missing data across stations.
+
+### Count months per station with missing values for Mean Temperature
+
+```{r}
+# Count missing values for each Station, Year, and Month 
+missing_temp_counts <- climate %>%   
+  group_by(Station, Year, Month) %>%   
+  summarise(     
+    `Missing Mean Temperature` = sum(is.na(`Mean Temperature (Celsius)`))) %>%   
+  # Exclude rows where all missing counts are zero
+  filter(`Missing Mean Temperature` > 0) |>
+  ungroup()
+```
+
+```{r}
+# Count the number of months per station where missing days exceed 15 
+missing_temp_summary <- missing_temp_counts %>%    
+  filter(`Missing Mean Temperature` >= 15) %>%   
+  group_by(Station, Year) %>%   
+  summarise(Count_Months = n()) %>%   
+  arrange(Year)|>   
+  pivot_wider(names_from = Year, values_from = Count_Months) |>   
+  ungroup()
+```
+
+Observations - Those same 7 stations for daily rainfall are also part of the total 15 stations for Mean Temp with missing data where \>15 days are missing per month. Also observed that some stations have full years of missing data record. And 2015-2017 specially has a lot of missing data across stations.
+
+### Filtering out stations with \>=3 months of missing records from climate dataset
+
+As observed above, we are only going to keep data from 2018 onwards considering the missing data for 2015-2017 time period. Then for each station we take the total count of missing months across the years and flag the stations with \>=3 total count so that those flagged stations can be filtered out from our main climate dataset.
+
+```{r}
+filter_invalid_stations <- function(summary_df, from_year = 2018) {
+  # Get only year columns ≥ from_year
+  year_cols <- summary_df |> 
+    select(where(is.numeric)) |> 
+    select(matches("^[0-9]{4}$")) |> 
+    select(as.character(from_year):last_col()) |> 
+    colnames()
+
+  summary_df |> 
+    rowwise() |> 
+    mutate(total_flagged_months = sum(c_across(all_of(year_cols)), na.rm = TRUE)) |> 
+    filter(total_flagged_months >= 3) |> 
+    pull(Station)
+}
+
+```
+
+```{r}
+# Get invalid stations (stations to exclude)
+invalid_rain_stations <- filter_invalid_stations(missing_rain_summary)
+invalid_temp_stations <- filter_invalid_stations(missing_temp_summary)
+```
+
+```{r}
+# Combine all stations to exclude
+stations_to_exclude <- union(invalid_rain_stations, invalid_temp_stations) 
+```
+
+There are total 5 stations which will be excluded. Applying this filter on the climate dataset.
+
+```{r}
+# Now filter the full dataset to only include stations from 2018-2024
+climate_final <- climate |> 
+  filter(!(Station %in% stations_to_exclude), Year >= 2018, Year <= 2024)
+
+summary(climate_final)
+```
+
+Below is the list of the final 15 AWS stations that we will be focusing our analysis on.
+
+```{r}
+climate_final %>% 
+  distinct(Station) %>% 
+  arrange(Station) %>% 
+  mutate(Station_ID = row_number())
+```
+
+Saving the final dataset.
+
+```{r}
+# Save the full final cleaned dataset
+# write_csv(climate_final, "data/climate_historical_daily_records/climate_final_2018_2024.csv")
+```
+
+## Replacing Missing Values
