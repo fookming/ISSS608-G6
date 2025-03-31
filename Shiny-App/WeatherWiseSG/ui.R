@@ -7,11 +7,18 @@
 #    https://shiny.posit.co/
 #
 
+# ---------------------------------------------------------
+# Load Packages
+# ---------------------------------------------------------
 library(bs4Dash)
 
+# ---------------------------------------------------------
+# Dashboard Page Layout
+# ---------------------------------------------------------
 dashboardPage(
   title = "WeatherWise Singapore",
   
+  # Header (Top Bar with Title)
   header = dashboardHeader(
     title = dashboardBrand(
       title = "WeatherWise SG",
@@ -20,6 +27,7 @@ dashboardPage(
     )
   ),
   
+  # Sidebar Menu (Navigation)
   sidebar = dashboardSidebar(
     skin = "light",
     status = "primary",
@@ -48,10 +56,12 @@ dashboardPage(
     )
   ),
   
+  # Main Body (Tab Content Area)
   body = dashboardBody(
     
     # Tabs
     bs4TabItems(
+      
       bs4TabItem(tabName = "landing",
                  h2("A Visual Exploration Tool for Singapore's Weather"),
                  p("Understanding Singapore's changing weather..."),  # You can use HTML for formatting
@@ -60,7 +70,7 @@ dashboardPage(
      
       bs4TabItem(tabName = "eda_overview",
                  fluidRow(
-                   # Left panel - dropdown filter
+                   # Filters columns
                    column(
                      width = 2,
                      
@@ -96,7 +106,7 @@ dashboardPage(
                      )
                    ),
                    
-                   # Main panel: charts, value boxes, etc.
+                   # Main Chart column: charts, value boxes, etc.
                    column(
                      width = 10,
                      fluidRow(
@@ -144,18 +154,10 @@ dashboardPage(
                                   status = "primary",
                                   
                                   h5("Select Parameter:"),
-                                  selectInput("eda_station_param_1", NULL,
-                                              choices = c("Daily Rainfall" = "Daily Rainfall Total (mm)",
-                                                          "Mean Temperature" = "Mean Temperature (Celsius)",
-                                                          "Maximum Temperature" = "Maximum Temperature (Celsius)",
-                                                          "Minimum Temperature" = "Minimum Temperature (Celsius)",
-                                                          "Mean Wind Speed" = "Mean Wind Speed (km/h)"),
-                                              selected = "Mean Temperature (Celsius)"
-                                  ),
+                                  selectInput("eda_station_param_1", NULL, choices = c("Loading..." = "loading")),  # set dynamically in server
+                                  
                                   h5("Select Time Interval:"),
-                                  radioButtons("eda_station_time_1", NULL,
-                                               choices = c("Overall", "By Year"),
-                                               selected = "Overall")
+                                  selectInput("eda_station_time_1", NULL, choices = c("Loading..." = "loading"))  # set dynamically in server
                                   )
                               ),
                               column(
