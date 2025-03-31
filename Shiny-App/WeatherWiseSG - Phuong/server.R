@@ -340,9 +340,9 @@ function(input, output, session) {
                     values = "brewer.greens")) +
         tm_title(paste("Interpolated Map of ", input$geo_inter_weather_var, 
                        " for ", 
-                       ifelse(input$geo_extreme_time_interval == 'Year', 
-                              format(as.Date(input$geo_extreme_year_input), "%Y"), 
-                              format(as.Date(paste0(input$geo_extreme_month_input, "-01")), 
+                       ifelse(input$geo_inter_time_interval == 'Year', 
+                              format(as.Date(input$geo_inter_year_input), "%Y"), 
+                              format(as.Date(paste0(input$geo_inter_month_input, "-01")), 
                                      "%b-%Y"))))
 
     })
