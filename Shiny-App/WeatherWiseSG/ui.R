@@ -10,7 +10,7 @@
 # ---------------------------------------------------------
 # Load Packages
 # ---------------------------------------------------------
-library(bs4Dash)
+pacman::p_load(shiny, bs4Dash, plotly)
 
 # ---------------------------------------------------------
 # Dashboard Page Layout
@@ -70,57 +70,132 @@ dashboardPage(
      
       bs4TabItem(tabName = "eda_overview",
                  fluidRow(
-                   # Filters columns
+                   
+                   # -- Left Column: Filters --
                    column(
                      width = 2,
                      
-                     #  Info Box (collapsible)
+                     # Info Box (Optional)
                      box(
-                       title = tags$span(icon("info-circle"), "Overall"),
+                       title = tags$span(icon("info-circle"), "About"),
                        width = 12,
                        collapsible = TRUE,
                        collapsed = TRUE,
                        status = "info",
                        solidHeader = TRUE,
-                       p("This view shows overall weather metrics.")
+                       p("This section gives a high-level overview of Singapore's weather across years.")
                      ),
                      
-                     #  Parameter Control Panel
+                     # Filter Box
                      box(
                        title = "Filters",
                        width = 12,
                        solidHeader = TRUE,
                        status = "primary",
                        
-                       h5("Select Parameter:"),
                        selectInput(
-                         inputId = "overview_parameter",
-                         label = NULL,
-                         choices = c("Daily Rainfall" = "Daily Rainfall Total (mm)",
-                                     "Mean Temperature" = "Mean Temperature (Celsius)",
-                                     "Maximum Temperature" = "Maximum Temperature (Celsius)",
-                                     "Minimum Temperature" = "Minimum Temperature (Celsius)",
-                                     "Mean Wind Speed" = "Mean Wind Speed (km/h)"),
-                         selected = "Mean Temperature (Celsius)"
+                         inputId = "eda_overview_parameter",
+                         label = "Select Parameter:",
+                         choices = c("Loading..." = "loading"),
+                         width = "100%"
                        )
                      )
                    ),
                    
-                   # Main Chart column: charts, value boxes, etc.
+                   # -- Right Column: Charts and Value Boxes --
                    column(
                      width = 10,
-                     fluidRow(
-                       box(title = "Overview charts", width = 12, solidHeader = TRUE,
-                           status = "primary", collapsible = FALSE,
-                           plotOutput("overview_charts")
+                     box(
+                       title = uiOutput("eda_overview_title"),
+                       width = 12,
+                       solidHeader = TRUE,
+                       status = "primary",
+
+                       # -- Top Row: Line Chart + Value Boxes --
+                       fluidRow(
+                         column(width = 6,
+                                plotlyOutput("overview_yearcompare_plot", height = "280px")
+                         ),
+                         column(width = 6,
+                                fluidRow(
+                                  column(width = 6, style = "padding-right: 3px; padding-bottom: 8px;", uiOutput("overview_box_1")),
+                                  column(width = 6, style = "padding-left: 3px; padding-bottom: 8px;", uiOutput("overview_box_2"))
+                                ),
+                                fluidRow(
+                                  column(width = 6, style = "padding-right: 3px;", uiOutput("overview_box_3")),
+                                  column(width = 6, style = "padding-left: 3px;", uiOutput("overview_box_4"))
+                                )
+                         )
+                       ),
+                       
+                       
+                       # -- Bottom Row: 2 Charts Side-by-Side --
+                       fluidRow(
+                         column(width = 6,
+                                plotlyOutput("overview_yearly_plot", height = "220px")
+                         ),
+                         column(width = 6,
+                                plotlyOutput("overview_5_stations_plot", height = "220px")
+                         )
                        )
                      )
-                     # Add more charts or value boxes here later
                    )
                  )
-        ),
+      ),
       
-      bs4TabItem(tabName = "eda_seasonality"
+      
+      bs4TabItem(tabName = "eda_seasonality",
+                 fluidRow(
+                   
+                   # ---- Row 1: About Box ----
+                   column(
+                     width = 12,
+                     box(
+                       title = tags$span(icon("info-circle"), "About"),
+                       width = 12,
+                       collapsible = TRUE,
+                       collapsed = TRUE,
+                       status = "info",
+                       solidHeader = TRUE,
+                       p("This view shows seasonal trends and cycles in weather patterns.")
+                     )
+                   ),
+                   
+                   # ---- Row 2: Charts Box with Dropdowns Inside ----
+                   column(
+                     width = 12,
+                     box(
+                       title = "Seasonality Charts",
+                       width = 12,
+                       solidHeader = TRUE,
+                       status = "primary",
+                       
+                       # -- Filters in Single Line Centered --
+                       div(style = "display: flex; justify-content: center; gap: 40px; padding: 1px 0;",
+                           
+                           # Parameter Dropdown + Label
+                           div(style = "display: flex; align-items: center; gap: 5px;",
+                               tags$label("Select Parameter:", style = "margin-bottom: 0;"),
+                               selectInput("eda_seasonality_parameter", label = NULL,
+                                           choices = c("Loading..." = "loading"), width = "200px")
+                           ),
+                           
+                           # Station Dropdown + Label
+                           div(style = "display: flex; align-items: center; gap: 5px;",
+                               tags$label("Select Station:", style = "margin-center: 0;"),
+                               selectInput("eda_seasonality_station", label = NULL,
+                                           choices = c("Loading..." = "loading"), width = "200px")
+                           )
+                       ),
+                       
+                       # -- Chart Section Below --
+                       fluidRow(
+                         column(width = 6, plotlyOutput("seasonal_trend_plot")),
+                         column(width = 6, plotOutput("seasonal_cycle_plot"))
+                       )
+                     )
+                   )
+                 )
         ),
     
       bs4TabItem(tabName = "eda_station",
@@ -153,11 +228,9 @@ dashboardPage(
                                   solidHeader = TRUE,
                                   status = "primary",
                                   
-                                  h5("Select Parameter:"),
-                                  selectInput("eda_station_param_1", NULL, choices = c("Loading..." = "loading")),  # set dynamically in server
+                                  selectInput("eda_station_param_1", "Select Parameter", choices = c("Loading..." = "loading")),  # set dynamically in server
                                   
-                                  h5("Select Time Interval:"),
-                                  selectInput("eda_station_time_1", NULL, choices = c("Loading..." = "loading"))  # set dynamically in server
+                                  selectInput("eda_station_time_1", "Select Time Interval", choices = c("Loading..." = "loading"))  # set dynamically in server
                                   )
                               ),
                               column(
@@ -165,7 +238,7 @@ dashboardPage(
                                 fluidRow(
                                   box(title = "Chart", width = 12, solidHeader = TRUE,
                                       status = "primary", collapsible = FALSE,
-                                      plotOutput("station_dist_plot")
+                                      plotlyOutput("station_dist_plot")
                                   )
                                 )
                               )
@@ -197,19 +270,9 @@ dashboardPage(
                                   solidHeader = TRUE,
                                   status = "primary",
                                   
-                                  h5("Select Parameter:"),
-                                  selectInput("eda_station_param_2", NULL,
-                                              choices = c("Daily Rainfall" = "Daily Rainfall Total (mm)",
-                                                          "Mean Temperature" = "Mean Temperature (Celsius)",
-                                                          "Maximum Temperature" = "Maximum Temperature (Celsius)",
-                                                          "Minimum Temperature" = "Minimum Temperature (Celsius)",
-                                                          "Mean Wind Speed" = "Mean Wind Speed (km/h)"),
-                                              selected = "Mean Temperature (Celsius)"
-                                  ),
-                                  h5("Select Time Interval:"),
-                                  radioButtons("eda_station_time_2", NULL,
-                                               choices = c("Overall", "By Year"),
-                                               selected = "Overall")
+                                  selectInput("eda_station_param_2", "Select Parameter", choices = c("Loading..." = "loading")),  # set dynamically in server
+                                  
+                                  selectInput("eda_station_time_2", "Select Time Interval", choices = c("Loading..." = "loading"))  # set dynamically in server
                                 )
                               ),
                               column(
@@ -217,7 +280,7 @@ dashboardPage(
                                 fluidRow(
                                   box(title = "Chart", width = 12, solidHeader = TRUE,
                                       status = "primary", collapsible = FALSE,
-                                      plotOutput("month_station_heatmap")
+                                      plotlyOutput("month_station_heatmap")
                                   )
                                 )
                               )
