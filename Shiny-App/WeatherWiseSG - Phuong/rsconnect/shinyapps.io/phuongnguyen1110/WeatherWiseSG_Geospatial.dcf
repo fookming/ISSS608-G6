@@ -1,0 +1,12 @@
+name: WeatherWiseSG_Geospatial
+title: WeatherWiseSG_Geospatial
+username: phuongnguyen1110
+account: phuongnguyen1110
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 14382385
+bundleId: 10032552
+url: https://phuongnguyen1110.shinyapps.io/WeatherWiseSG_Geospatial/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

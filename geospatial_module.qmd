@@ -123,8 +123,12 @@ missing_rain_counts <- climate_rain %>%
     `Missing Daily Rainfall Total` = sum(is.na(`Daily Rainfall Total (mm)`))
   ) %>%
   # Exclude rows where all missing counts are zero
-  filter(`Missing Daily Rainfall Total` > 0) |>
+  # filter(`Missing Daily Rainfall Total` 0) |>
   ungroup()
+```
+
+```{r}
+write_csv(missing_rain_counts,'missing_rain_counts.csv')
 ```
 
 ```{r}
@@ -145,8 +149,12 @@ missing_temp_counts <- climate_temperature_wind %>%
   summarise(
     `Missing Mean Temperature` = sum(is.na(`Mean Temperature (Celsius)`))) %>%
   # Exclude rows where all missing counts are zero
-  filter(`Missing Mean Temperature` > 0) |>
+  # filter(`Missing Mean Temperature` > 0) |>
   ungroup()
+```
+
+```{r}
+write_csv(missing_temp_counts,"missing_temp_counts.csv")
 ```
 
 ```{r}

@@ -1,0 +1,64 @@
+﻿Station,code,Lat,Long,Station_Type
+Admiralty,S104,1.4439,103.7854,Full AWS Station
+Admiralty (West),S105,,,Closed Station
+Ang Mo Kio,S109,1.3793,103.85,Full AWS Station
+Boon Lay (East),S86,,,Closed Station
+Boon Lay (West),S63,,,Closed Station
+Botanic Garden,S120,1.3087,103.818,Rainfall Station
+Buangkok,S55,,,Closed Station
+Bukit Panjang,S64,1.3823,103.7607,Rainfall Station
+Bukit Timah,S90,1.3191,103.8193,Rainfall Station
+Buona Vista,S92,1.2841,103.7888,Rainfall Station
+Chai Chee,S61,,,Closed Station
+Changi,S24,1.3678,103.9823,Full AWS Station
+Choa Chu Kang (Central),S114,1.3821,103.7381,Rainfall Station
+Choa Chu Kang (South),S121,1.3729,103.7224,Full AWS Station
+Choa Chu Kang (West),S11,,,Closed Station
+Clementi,S50,1.3318,103.7762,Full AWS Station
+Dhoby Ghaut,S118,,,Closed Station
+East Coast Parkway,S107,1.3133,103.962,Full AWS Station
+Jurong (East),S39,,,Closed Station
+Jurong (North),S101,,,Closed Station
+Jurong (West),S44,1.3458,103.6817,Full AWS Station
+Jurong Island,S117,1.2542,103.6741,Full AWS Station
+Jurong Pier,S33,1.3082,103.71,Rainfall Station
+Kampong Bahru,S31,,,Closed Station
+Kent Ridge,S71,1.2923,103.7815,Rainfall Station
+Khatib,S122,,,Closed Station
+Kranji Reservoir,S66,1.4387,103.736,Rainfall Station
+Lim Chu Kang,S112,1.4388,103.7017,Rainfall Station
+Lower Peirce Reservoir,S08,1.37,103.8271,Rainfall Station
+Macritchie Reservoir,S07,1.3418,103.8339,Rainfall Station
+Mandai,S40,1.4067,103.7832,Rainfall Station
+Marina Barrage,S108,1.2799,103.8703,Full AWS Station
+Marine Parade,S113,1.305,103.9112,Rainfall Station
+Newton,S111,1.3106,103.8365,Full AWS Station
+Nicoll Highway,S119,1.295,103.8622,Rainfall Station
+Pasir Panjang,S116,1.2824,103.7545,Full AWS Station
+Pasir Ris (West),S29,1.3865,103.9413,Rainfall Station
+Pasir Ris Central,S94,1.3679,103.9489,Rainfall Station
+Paya Lebar,S06,1.3571,103.9037,Full AWS Station
+Pulau Ubin,S106,1.4168,103.9673,Full AWS Station
+Punggol,S81,1.4028,103.9095,Rainfall Station
+Queenstown,S77,1.2937,103.8127,Rainfall Station
+Seletar,S25,1.4167,103.865,Full AWS Station
+Semakau Island,S102,1.1902,103.7657,Full AWS Station
+Sembawang,S80,1.425,103.82,Full AWS Station
+Sentosa Island,S60,1.2503,103.8275,Full AWS Station
+Serangoon,S36,1.3377,103.8662,Rainfall Station
+Serangoon North,S110,,,Closed Station
+Simei,S84,1.3443,103.9441,Rainfall Station
+Somerset (Road),S79,1.3003,103.8372,Rainfall Station
+Tai Seng,S43,1.3406,103.8882,Full AWS Station
+Tanjong Katong,S78,1.307,103.8907,Rainfall Station
+Tanjong Pagar,S72,,,Closed Station
+Tengah,S23,1.3858,103.7119,Full AWS Station
+Toa Payoh,S88,1.3417,103.8515,Rainfall Station
+Tuas,S89,1.3199,103.6613,Rainfall Station
+Tuas South,S115,1.2938,103.6184,Full AWS Station
+Tuas West,S82,,,Closed Station
+Ulu Pandan,S35,,,Closed Station
+Upper Peirce Reservoir,S69,,,Closed Station
+Upper Thomson,S46,,,Closed Station
+Whampoa,S123,,,Closed Station
+Yishun,S91,,,Closed Station
