@@ -10,7 +10,7 @@
 # ---------------------------------------------------------
 # Load Packages
 # ---------------------------------------------------------
-pacman::p_load(shiny, bs4Dash, plotly)
+pacman::p_load(shiny, bs4Dash, plotly, shinyWidgets)
 
 # ---------------------------------------------------------
 # Dashboard Page Layout
@@ -289,8 +289,103 @@ dashboardPage(
               )
         ),
       
-      bs4TabItem(tabName = "cda_station"
-        ),
+      bs4TabItem(tabName = "cda_station",
+                 fluidRow(
+                   
+                   # -- Shared Filters (left panel)
+                   column(width = 2,
+                          box(
+                            title = "Filters",
+                            width = 12,
+                            solidHeader = TRUE,
+                            status = "primary",
+                            
+                            selectInput("cda_station_param", "Select Parameter", choices = c("Loading..." = "loading")),
+                            
+                            selectInput("cda_station_time_type", "Select Time Interval",
+                                        choices = c("Overall", "Year", "Month"), selected = "Overall"),
+                            
+                            uiOutput("cda_station_time_picker"),
+                            
+                            selectizeInput("cda_station_list", "Select Station(s)",
+                                           choices = NULL,
+                                           multiple = TRUE,
+                                           options = list(placeholder = 'Select...', plugins = list('remove_button')))
+                            
+                          )
+                   ),
+                   
+                   # -- Tab Content (right panel)
+                   column(width = 10,
+                          tabsetPanel(
+                            id = "cda_station_tabs",
+                            type = "tabs",
+                            
+                            # --- TAB 1: Normality Test ---
+                            tabPanel("Normality Test",
+                                     br(),
+                                     actionButton("cda_station_normality_btn", "Check Normality", class = "btn-success", width = "20%"),
+                                     br(), br(),
+                                     box(
+                                       title = "Anderson-Darling Test Result",
+                                       width = 12,
+                                       solidHeader = TRUE,
+                                       collapsed = TRUE,
+                                       status = "primary",
+                                       dataTableOutput("cda_ad_table")
+                                     ),
+                                     box(
+                                       title = "QQ Plot",
+                                       width = 12,
+                                       solidHeader = TRUE,
+                                       status = "primary",
+                                       plotlyOutput("cda_station_normality_plot", height = "300px")
+                                     )
+                                     
+                                     
+                            ),
+                            
+                            # --- TAB 2: Statistical Test ---
+                            tabPanel("Run Statistical Test",
+                                     br(),
+                                     fluidRow(
+                                       column(width = 2,
+                                              box(
+                                                title = "Statistical Test Options",
+                                                width = 12,
+                                                solidHeader = TRUE,
+                                                status = "primary",
+                                                selectInput("cda_station_test_type", "Test Type",
+                                                            choices = c("Parametric", "Non-Parametric", "Robust", "Bayes-Factor"),
+                                                            selected = "Non-Parametric"),
+                                                selectInput("cda_station_conf_level", "Confidence Level",
+                                                            choices = c("90%", "95%", "99%"),
+                                                            selected = "95%"),
+                                                checkboxInput("cda_station_pairwise", "Show Pairwise Comparison", value = FALSE),
+                                                conditionalPanel(
+                                                  condition = "input.cda_station_pairwise == true",
+                                                  selectInput("cda_station_pairwise_display", "Pairwise Display Type",
+                                                              choices = c("Significant", "Non-Significant", "All"),
+                                                              selected = "Significant")
+                                                ),
+                                                actionButton("cda_station_test_btn", "Run Test", class = "btn-success", width = "100%")
+                                              )
+                                       ),
+                                       column(width = 10,
+                                              box(
+                                                title = "Statistical Test Results",
+                                                width = 12,
+                                                solidHeader = TRUE,
+                                                status = "primary",
+                                                plotOutput("cda_station_test_plot", height = "400px")
+                                              )
+                                       )
+                                     )
+                            )
+                          )
+                   )
+                 )
+      ),
       
       bs4TabItem(tabName = "cda_time"
         ),

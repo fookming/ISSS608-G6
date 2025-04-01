@@ -14,7 +14,7 @@ pacman::p_load(lubridate, ggthemes, tidyverse,
                ggridges, corrplot, GGally, ggstatsplot,
                DT, viridis, forcats, nortest, patchwork,
                tsibble, feasts, ggpubr, shiny, bs4Dash,
-               plotly)
+               plotly, shinyWidgets)
 
 # -----------------------------------------------------------------
 # Importing data
@@ -316,7 +316,7 @@ function(input, output, session) {
     
     p <- ggplot(yearly_data, aes(x = Year, y = Avg_Value)) +
       geom_line(color = "darkorange", linewidth = 1) +
-      geom_point(aes(text = round(Avg_Value, 2)),
+      geom_point(aes(text= round(Avg_Value, 2)),
                  size = 2, color = "darkorange") +
       labs(
         title = plot_title,
@@ -609,11 +609,7 @@ function(input, output, session) {
       theme(
         axis.text.x = element_text(angle = 90, hjust = 1),   # Rotate x labels
         panel.grid.minor.x = element_blank()
-      ) +
-      scale_x_yearmonth(
-        date_breaks = "2 years",     # Adjust interval here
-        date_labels = "%Y"
-      )
+      ) 
   })
   
   # 3.1 Station Comparison - Station-wise Distribution
@@ -776,7 +772,153 @@ function(input, output, session) {
   # CDA Tab Outputs
   # -------------------------------------------------------------
   # 1.1 Compare across stations - Normality
-  # output$cda_test_results <- renderPrint({ ... })
+  # Update parameter choices dynamically from dataset
+  observe({
+    # Define mapping: Display Name = Column Name
+    param_choices <- c(
+      "Daily Rainfall" = "Daily Rainfall Total (mm)",
+      "Mean Temperature" = "Mean Temperature (Celsius)",
+      "Maximum Temperature" = "Maximum Temperature (Celsius)",
+      "Minimum Temperature" = "Minimum Temperature (Celsius)",
+      "Mean Wind Speed" = "Mean Wind Speed (km/h)"
+    )
+    
+    # Filter only columns that actually exist in the dataset
+    valid_params <- param_choices[param_choices %in% names(climate_eda)]
+    
+    updateSelectInput(session, "cda_station_param",
+                      choices = valid_params,
+                      selected = "Mean Temperature (Celsius)")
+  })
+  
+  # ---- Dynamic Time Picker ----
+  output$cda_station_time_picker <- renderUI({
+    req(input$cda_station_time_type)
+    selected_type <- input$cda_station_time_type
+    
+    min_date <- min(climate_eda$Date, na.rm = TRUE)
+    max_date <- max(climate_eda$Date, na.rm = TRUE)
+    
+    if (selected_type == "Overall") {
+      return(NULL)
+    }
+    
+    if (selected_type == "Year") {
+      # Year-only picker using selectInput
+      year_choices <- sort(unique(lubridate::year(climate_eda$Date)))
+      selectInput("cda_station_year", "Select Year", choices = year_choices, selected = year_choices[1])
+      
+    } else if (selected_type == "Month") {
+      # Month-Year picker using airMonthpickerInput
+      airMonthpickerInput(
+        inputId = "cda_station_month",
+        label = "Select month and year",
+        value = min_date,
+        minDate = min_date,
+        maxDate = max_date
+      )
+    }
+  })
+  
+  # ---- Dynamic Station List ----
+  observe({
+    station_choices <- sort(unique(climate_eda$Station))
+    
+    updateSelectizeInput(session, "cda_station_list",
+                             choices = station_choices,
+                             selected = NULL,
+                             server = TRUE)
+  })
+  
+  filtered_climate_data <- reactive({
+    req(input$cda_station_list)
+    
+    df <- climate_eda %>% 
+      filter(Station %in% input$cda_station_list)
+    
+    # Filter by time type
+    if (input$cda_station_time_type == "Year") {
+      req(input$cda_station_year)
+      df <- df %>%
+        filter(lubridate::year(Date) == input$cda_station_year)
+      
+    } else if (input$cda_station_time_type == "Month") {
+      req(input$cda_station_month)
+      selected_date <- input$cda_station_month
+      df <- df %>%
+        filter(lubridate::year(Date) == lubridate::year(selected_date),
+               lubridate::month(Date) == lubridate::month(selected_date))
+    }
+    
+    return(df)
+  })
+  
+  observeEvent(input$cda_station_normality_btn, {
+    df <- filtered_climate_data()
+    req(nrow(df) > 0)
+    
+    param <- input$cda_station_param
+    req(param %in% names(df))
+    
+    station_list <- unique(df$Station)
+    
+    # QQ Plots
+    output$cda_station_normality_plot <- renderPlotly({
+      plots <- lapply(station_list, function(station) {
+        station_data <- df %>% filter(Station == station)
+        
+        values <- station_data[[param]]
+        values <- unlist(values)
+        values <- as.numeric(values)
+        values <- na.omit(values)
+        
+        ggqq <- ggqqplot(values, title = paste("QQ Plot -", station))
+        ggplotly(ggqq) %>% layout(title = list(text = paste0("<b>", station, "</b>")))
+      })
+      
+      num_stations <- length(plots)
+      nrows <- 2
+      ncols <- ceiling(num_stations / nrows)
+      
+      subplot(plots,
+              nrows = nrows,
+              shareX = FALSE,
+              shareY = FALSE,
+              titleY = TRUE,
+              margin = 0.03)
+    })
+    
+    # Create test result dataframe
+    test_result_df <- do.call(rbind, lapply(station_list, function(station) {
+      station_data <- df %>% filter(Station == station)
+      
+      values <- station_data[[param]]
+      values <- unlist(values)
+      values <- as.numeric(values)
+      values <- na.omit(values)
+      
+      ad <- tryCatch(nortest::ad.test(values), error = function(e) return(NULL))
+      
+      if (is.null(ad)) {
+        data.frame(Station = station, A = NA, P_Value = NA)
+      } else {
+        data.frame(
+          Station = station,
+          A = round(ad$statistic, 4),
+          P_Value = round(ad$p.value, 4)
+        )
+      }
+    }))
+    
+    # Output the table
+    output$cda_ad_table <- renderDataTable({
+      test_result_df
+    }, options = list(scrollX = TRUE, pageLength = 3))
+  })
+  
+  
+  
+  
   # 1.2 Compare across stations - Statistical Test
   # output$cda_group_plot <- renderPlot({ ... })
   
