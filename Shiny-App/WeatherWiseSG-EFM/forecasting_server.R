@@ -253,7 +253,6 @@ forecasting_server <- function(id) {
     # TABPANEL - FORECASTING
     
     # Static Forecast Plot
-    # Static Forecast Plot
     output$static_forecast_plot <- renderPlot({
       req(input$model, input$forecast_horizon, input$time_view, filtered_ts())
       
@@ -313,6 +312,8 @@ forecasting_server <- function(id) {
     
     
   
+    
+    
     # Interactive forecast plot
     output$interactive_forecast_plot <- renderPlotly({
       req(input$model, input$forecast_horizon, input$time_view, filtered_aggregated_data())
@@ -332,18 +333,21 @@ forecasting_server <- function(id) {
       
       forecast_horizon <- as.numeric(input$forecast_horizon)
       freq <- switch(input$time_view, "Day" = "day", "Week" = "week", "Month" = "month")
+      
+      # explicitly correct forecast start date
       last_date <- max(aggregated_data$period)
-      forecast_dates <- seq.Date(from = last_date + days(1), by = freq, length.out = forecast_horizon)
+      forecast_dates <- switch(input$time_view,
+                               "Day" = seq.Date(last_date + days(1), by = "day", length.out = forecast_horizon),
+                               "Week" = seq.Date(last_date + weeks(1), by = "week", length.out = forecast_horizon),
+                               "Month" = seq.Date(last_date %m+% months(1), by = "month", length.out = forecast_horizon))
       
       if (input$model == "ARIMA") {
         fc <- forecast(auto.arima(ts_data), h = forecast_horizon)
       } else if (input$model == "ETS") {
         fc <- forecast(ets(ts_data), h = forecast_horizon)
       } else if (input$model == "Prophet") {
-        
         # Correctly prepared aggregated historical data
-        df_prophet <- aggregated_data %>%
-          rename(ds = period, y = value)
+        df_prophet <- aggregated_data %>% rename(ds = period, y = value)
         
         # Prophet model fitting explicitly
         model <- prophet(df_prophet)
@@ -388,18 +392,11 @@ forecasting_server <- function(id) {
                    "Week" = paste0("Week: ", format(date, "%Y-%U")),
                    "Day" = paste0("Date: ", format(date, "%Y-%m-%d"))
             ),
-            "<br>Rainfall: ", round(value, 2), " ")
+            "<br>Rainfall: ", round(value, 2), "  ")
         )
       }
       
       connector_df <- plot_data %>% filter(row_number() %in% c(length(ts_data), length(ts_data) + 1))
-      
-  #    y_axis_title <- paste(switch(input$time_view,
-  #                                 "Day" = "Daily Total",
-  #                                 "Week" = "Weekly Total",
-  #                                 "Month" = "Monthly Total"), input$variable)
-      
-      
       
       y_axis_title <- paste(
         switch(input$time_view,
@@ -408,7 +405,6 @@ forecasting_server <- function(id) {
                "Month" = if (input$variable == "Daily Rainfall Total (mm)") "Monthly Total - " else "Monthly Mean - "),
         input$variable
       )
-      
       
       plot_ly() %>%
         add_ribbons(data = plot_data,
@@ -432,9 +428,19 @@ forecasting_server <- function(id) {
                   name = "Connector", text = ~text, hoverinfo = "text") %>%
         layout(title = paste("Interactive", input$model, "Forecast for", y_axis_title, "at", input$station),
                xaxis = list(title = "Date"),
-               yaxis = list(title = paste(y_axis_title, " ")))
-   #            yaxis = list(title = paste(y_axis_title, "(mm)")))
+               yaxis = list(title = paste(y_axis_title, "  ")))
     })
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  
     
     
     
