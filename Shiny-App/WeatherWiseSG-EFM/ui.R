@@ -87,7 +87,7 @@ dashboardPage(
       bs4TabItem(tabName = "landing",
                  includeHTML("landing.html")
                  # h2("A Visual Exploration Tool for Singapore's Weather"),
-                # p("Understanding Singapore's changing weather..."),  # You can use HTML for formatting
+                #  p("Understanding Singapore's changing weather..."),  # You can use HTML for formatting
                 # h4("Overview of modules in app")
         ),
      

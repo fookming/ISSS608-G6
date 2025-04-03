@@ -1,5 +1,6 @@
 ---
 title: "Singapore Weather Dashboard"
+Date: 
 format:
   html:
     theme:
