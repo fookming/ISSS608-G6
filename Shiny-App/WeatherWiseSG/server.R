@@ -10,6 +10,10 @@ pacman::p_load(
   plotly, shinyWidgets, rlang
 )
 
+# EFM
+source("forecasting_server.R")
+
+
 # -----------------------------------------------------------------
 # Importing data
 # -----------------------------------------------------------------
@@ -1298,13 +1302,10 @@ function(input, output, session) {
     session$sendCustomMessage("toggleLoading", FALSE)
   })
 
-
-
-
   # Time Series Forecasting Tab Outputs
   # -------------------------------------------------------------
-  # output$ts_forecast_plot <- renderPlot({ ... })
-  # output$ts_trend_plot <- renderPlot({ ... })
+  # EFM
+  forecasting_server("forecasting")
 
 
   # Geo-Spatial Tab Outputs

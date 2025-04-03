@@ -5,25 +5,43 @@
 pacman::p_load(
   shiny, bs4Dash, plotly, shinyWidgets)
 
+# EFM
+library(shinyjs)  # clearly add this line explicitly
+library(forecast)
+library(memoise)
+library(cachem)
+library(tseries)
+library(prophet)
+library(ggplot2)
+library(lubridate)
+
 # ---------------------------------------------------------
 # Dashboard Page Layout
 # ---------------------------------------------------------
+
+source("forecasting_ui.R")
+
 dashboardPage(
   title = "WeatherWise Singapore",
 
-  # Header (Top Bar with Title)
   header = dashboardHeader(
     title = dashboardBrand(
       title = "WeatherWise SG",
-      color = "primary",
+      color = "info",
       href = "#"
-    )
+    ),
+    skin = "light",
+    fixed = TRUE,
+    controlbarIcon = NULL,
+    fullscreenIcon = NULL,
+    rightUi = NULL  
   ),
+  
 
   # Sidebar Menu (Navigation)
   sidebar = dashboardSidebar(
     skin = "light",
-    status = "primary",
+    status = "info",
     title = NULL,
     bs4SidebarMenu(
       bs4SidebarMenuItem("Landing Page", tabName = "landing", icon = icon("home")),
@@ -51,18 +69,42 @@ dashboardPage(
   # Main Body (Tab Content Area)
   body = dashboardBody(
 
+    useShinyjs(),  # <-- clearly put this at the top of dashboardBody
+
     # CSS overlay style
     tags$head(
       tags$style(HTML("
-      /* Font size tweaks (optional) */
-      .nav-sidebar .nav-link,
-      .nav-sidebar .nav-link span {
-        font-size: 14px !important;
-      }
-
-      .nav-sidebar .nav-treeview .nav-link {
-        font-size: 13px !important;
-      }
+        /* Change the header bar and title background to match 'info' status */
+        .main-header.navbar,
+        .main-header .brand-link {
+          background-color: #17a2b8 !important;  /* Bootstrap 'info' color */
+        }
+        
+        /* Sidebar font sizes */
+        .nav-sidebar .nav-link,
+        .nav-sidebar .nav-link span {
+          font-size: 14px !important;
+        }
+  
+        .nav-sidebar .nav-treeview .nav-link {
+          font-size: 14px !important;
+        }
+        
+        /* Reduce font size of labels for inputs */
+        .shiny-input-container > label {
+          font-size: 0.88em !important;
+        }
+    
+        /* Reduce font size inside selectize/dropdown inputs */
+        .selectize-input,
+        .selectize-dropdown-content {
+          font-size: 0.90em !important;
+        }
+    
+        /* Optional: reduce font size for all input fields generally */
+        .form-control {
+          font-size: 0.85em !important;
+        }
         
         #loading-overlay {
           position: fixed;
@@ -126,7 +168,7 @@ dashboardPage(
               title = "Filters",
               width = 12,
               solidHeader = TRUE,
-              status = "primary",
+              status = "info",
               selectInput(
                 inputId = "eda_overview_parameter",
                 label = "Select Parameter:",
@@ -143,7 +185,7 @@ dashboardPage(
               title = uiOutput("eda_overview_title"),
               width = 12,
               solidHeader = TRUE,
-              status = "primary",
+              status = "info",
 
               # -- Top Row: Line Chart + Value Boxes --
               fluidRow(
@@ -205,7 +247,7 @@ dashboardPage(
               title = "Seasonality Charts",
               width = 12,
               solidHeader = TRUE,
-              status = "primary",
+              status = "info",
 
               # -- Filters in Single Line Centered --
               div(
@@ -271,7 +313,7 @@ dashboardPage(
                   title = "Filters",
                   width = 12,
                   solidHeader = TRUE,
-                  status = "primary",
+                  status = "info",
                   selectInput("eda_station_param_1", "Select Parameter", choices = c("Loading..." = "loading")), # set dynamically in server
 
                   selectInput("eda_station_time_1", "Select Time Interval", choices = c("Loading..." = "loading")) # set dynamically in server
@@ -282,7 +324,7 @@ dashboardPage(
                 fluidRow(
                   box(
                     title = "Chart", width = 12, solidHeader = TRUE,
-                    status = "primary", collapsible = FALSE,
+                    status = "info", collapsible = FALSE,
                     plotlyOutput("station_dist_plot")
                   )
                 )
@@ -314,7 +356,7 @@ dashboardPage(
                   title = "Filters",
                   width = 12,
                   solidHeader = TRUE,
-                  status = "primary",
+                  status = "info",
                   selectInput("eda_station_param_2", "Select Parameter", choices = c("Loading..." = "loading")), # set dynamically in server
 
                   selectInput("eda_station_time_2", "Select Time Interval", choices = c("Loading..." = "loading")) # set dynamically in server
@@ -325,7 +367,7 @@ dashboardPage(
                 fluidRow(
                   box(
                     title = "Chart", width = 12, solidHeader = TRUE,
-                    status = "primary", collapsible = FALSE,
+                    status = "info", collapsible = FALSE,
                     plotlyOutput("month_station_heatmap")
                   )
                 )
@@ -358,7 +400,7 @@ dashboardPage(
               title = "Filters",
               width = 12,
               solidHeader = TRUE,
-              status = "primary",
+              status = "info",
               selectInput("cda_station_param", "Select Parameter", choices = c("Loading..." = "loading")),
               selectInput("cda_station_time_type", "Select Time Interval",
                 choices = c("Overall", "Year", "Month"), selected = "Overall"
@@ -379,7 +421,7 @@ dashboardPage(
               title = "Statistical Test Parameters",
               width = 12,
               solidHeader = TRUE,
-              status = "primary",
+              status = "info",
               selectInput("cda_station_test_type", "Test Type",
                 choices = c("Parametric", "Non-Parametric", "Robust", "Bayes-Factor"),
                 selected = "Non-Parametric"
@@ -388,8 +430,7 @@ dashboardPage(
                 choices = c("90%", "95%", "99%"),
                 selected = "95%"
               ),
-              br(),
-              actionButton("cda_station_test_btn", "Run Test", class = "btn-outline-primary", width = "100%")
+              actionButton("cda_station_test_btn", "Run Test", class = "btn-outline-info", width = "100%")
             )
           ),
 
@@ -404,7 +445,7 @@ dashboardPage(
               solidHeader = TRUE,
               collapsible = TRUE,
               collapsed = TRUE,
-              status = "primary",
+              status = "info",
               dataTableOutput("cda_ad_table")
             ),
 
@@ -413,7 +454,7 @@ dashboardPage(
               title = "Statistical Test Results",
               width = 12,
               solidHeader = TRUE,
-              status = "primary",
+              status = "info",
               plotOutput("cda_station_test_plot", height = "400px")
             )
           )
@@ -443,7 +484,7 @@ dashboardPage(
               title = "Filters",
               width = 12,
               solidHeader = TRUE,
-              status = "primary",
+              status = "info",
               selectInput("cda_time_param", "Select Parameter", choices = c("Loading..." = "loading")),
               selectizeInput("cda_time_station_list", "Select Station",
                 choices = NULL,
@@ -468,7 +509,7 @@ dashboardPage(
               title = "Statistical Test Parameters",
               width = 12,
               solidHeader = TRUE,
-              status = "primary",
+              status = "info",
               selectInput("cda_time_test_type", "Test Type",
                 choices = c("Parametric", "Non-Parametric", "Robust", "Bayes-Factor"),
                 selected = "Non-Parametric"
@@ -477,8 +518,7 @@ dashboardPage(
                 choices = c("90%", "95%", "99%"),
                 selected = "95%"
               ),
-              br(),
-              actionButton("cda_time_test_btn", "Run Test", class = "btn-outline-primary", width = "100%")
+              actionButton("cda_time_test_btn", "Run Test", class = "btn-outline-info", width = "100%")
             )
           ),
 
@@ -493,7 +533,7 @@ dashboardPage(
               solidHeader = TRUE,
               collapsible = TRUE,
               collapsed = TRUE,
-              status = "primary",
+              status = "info",
               dataTableOutput("cda_time_ad_table")
             ),
 
@@ -502,13 +542,13 @@ dashboardPage(
               title = "Statistical Test Results",
               width = 12,
               solidHeader = TRUE,
-              status = "primary",
+              status = "info",
               plotOutput("cda_time_test_plot", height = "400px")
             )
           )
         )
       ),
-      bs4TabItem(tabName = "forecasting"),
+      bs4TabItem(tabName = "forecasting", forecasting_ui("forecasting"), icon = icon("chart-line")),
       bs4TabItem(tabName = "geo_extreme"),
       bs4TabItem(tabName = "geo_interpolation"),
       bs4TabItem(tabName = "geo_modelling")
