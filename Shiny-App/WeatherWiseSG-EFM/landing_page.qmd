@@ -1,0 +1,29 @@
+---
+title: "Singapore Weather Dashboard"
+format:
+  html:
+    theme:
+      - minty
+    toc: false
+    number-sections: false
+---
+
+## 
+
+# **Singapore Weather Platform: Analytic & Visualization**
+
+Singapore’s tropical climate presents complex challenges for urban planning, infrastructure, and risk management due to high temperatures, intense humidity, and frequent rainfall. Current weather dashboards often lack the analytically depth needed for informed decision-making across sectors.
+
+This platform addresses those gaps by offering a comprehensive, standalone weather analytics solution tailored to Singapore’s unique climate. It integrates advanced statistical methods, spatial visualisation, and predictive modelling to empower users with actionable insights for strategic and climate-resilient planning across industries.
+
+## **Exploratory Data Analysis (EDA) & Comparative Data Analysis (CDA)**
+
+This section focuses on analyzing the distribution and trends of weather variables such as temperature, rainfall, and wind speed through visual tools like histograms and density plots. It also facilitates comparative analysis across different regions in Singapore and time periods, allowing users to observe seasonal differences. Additionally, it explores the relationships between variables, such as the correlation between temperature changes and rainfall or wind speed.
+
+## **Time Series Analysis & Forecasting**
+
+This section identifies long-term and seasonal patterns in weather data using rolling averages and seasonal plots. It includes decomposition techniques to separate trend, seasonality, and residuals, enabling a deeper understanding of climatic dynamics. Users can statistically analyze weather fluctuations and forecast future trends using models like ARIMA, Prophet, or Exponential Smoothing to assess future climate risks and variations.
+
+## **Geo-spatial Analysis**
+
+This module detects spatial patterns and dependencies in weather metrics across Singapore. It identifies clusters of high or low values in temperature, rainfall, or wind speed, which may indicate localized climatic phenomena. Spatial autocorrelation methods are utilized to detect significant anomalies or hot-spots. Additionally, spatial interpolation and geographically weighted predictive models are used to forecast weather conditions at unmeasured locations, integrating both distance-based and machine learning approaches.

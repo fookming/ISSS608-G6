@@ -55,6 +55,8 @@ print("Download process completed for all stations.")
 ```
 
 ```{r}
+#| eval: false
+
 library(httr)
 library(readr)
 
@@ -112,6 +114,7 @@ print("Download process completed for all stations.")
 ```
 
 ```{r}
+#| eval: false
 
 library(httr)
 library(readr)
