@@ -196,8 +196,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtain a list of station codes</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>station_codes <span class="ot">&lt;-</span> station_records<span class="sc">$</span><span class="st">`</span><span class="at">code</span><span class="st">`</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(station_codes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>station_type <span class="ot">&lt;-</span> station_records<span class="sc">$</span><span class="st">`</span><span class="at">Station_Type</span><span class="st">`</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(station_codes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] "S104" "S105" "S109" "S86"  "S63"  "S120" "S55"  "S64"  "S90"  "S92" 
 [11] "S61"  "S24"  "S114" "S121" "S11"  "S50"  "S118" "S107" "S39"  "S101"
@@ -209,94 +210,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set base URL template and save directory</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>base_url_template <span class="ot">&lt;-</span> <span class="st">"http://www.weather.gov.sg/files/dailydata/DAILYDATA_%s_%d%s.csv"</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>save_directory <span class="ot">&lt;-</span> <span class="st">"data/climate_historical_daily_records"</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(save_directory, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop through each station code</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (station_code <span class="cf">in</span> station_codes) {</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Loop through each year and month</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (year <span class="cf">in</span> <span class="dv">2014</span><span class="sc">:</span><span class="dv">2023</span>) {</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (month <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>) {</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Format the month properly as a string</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>      month_str <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">"%02d"</span>, month)</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Construct the full URL</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>      file_url <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(base_url_template, station_code, year, month_str)</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Make the request and save the file</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>      response <span class="ot">&lt;-</span> <span class="fu">GET</span>(file_url)</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Check if the request was successful (status code 200)</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">status_code</span>(response) <span class="sc">==</span> <span class="dv">200</span>) {</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>        file_path <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">"%s/DAILYDATA_%s_%d%s.csv"</span>, save_directory, station_code, year, month_str)</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        <span class="fu">writeBin</span>(<span class="fu">content</span>(response, <span class="st">"raw"</span>), file_path)</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Downloaded:"</span>, file_path))</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>        <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Failed to download:"</span>, file_url))</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Download process completed for all stations."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(station_type)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "Full AWS Station" "Closed Station"   "Full AWS Station" "Closed Station"  
+ [5] "Closed Station"   "Rainfall Station" "Closed Station"   "Rainfall Station"
+ [9] "Rainfall Station" "Rainfall Station" "Closed Station"   "Full AWS Station"
+[13] "Rainfall Station" "Full AWS Station" "Closed Station"   "Full AWS Station"
+[17] "Closed Station"   "Full AWS Station" "Closed Station"   "Closed Station"  
+[21] "Full AWS Station" "Full AWS Station" "Rainfall Station" "Closed Station"  
+[25] "Rainfall Station" "Closed Station"   "Rainfall Station" "Rainfall Station"
+[29] "Rainfall Station" "Rainfall Station" "Rainfall Station" "Full AWS Station"
+[33] "Rainfall Station" "Full AWS Station" "Rainfall Station" "Full AWS Station"
+[37] "Rainfall Station" "Rainfall Station" "Full AWS Station" "Full AWS Station"
+[41] "Rainfall Station" "Rainfall Station" "Full AWS Station" "Full AWS Station"
+[45] "Full AWS Station" "Full AWS Station" "Rainfall Station" "Closed Station"  
+[49] "Rainfall Station" "Rainfall Station" "Full AWS Station" "Rainfall Station"
+[53] "Closed Station"   "Full AWS Station" "Rainfall Station" "Rainfall Station"
+[57] "Full AWS Station" "Closed Station"   "Closed Station"   "Closed Station"  
+[61] "Closed Station"   "Closed Station"   "Closed Station"  </code></pre>
 </div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(httr)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Set base URL template and save file path</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>base_url_template <span class="ot">&lt;-</span> <span class="st">"http://www.weather.gov.sg/files/dailydata/DAILYDATA_%s_%d%s.csv"</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>save_file <span class="ot">&lt;-</span> <span class="st">"data/climate_historical_daily_records/Climate_Data_2015_2024_v1_1.csv"</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="fu">dirname</span>(save_file), <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize CSV file if it doesn't exist</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(save_file)) {</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write.csv</span>(<span class="fu">data.frame</span>(), save_file, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to download and append data</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>download_and_append <span class="ot">&lt;-</span> <span class="cf">function</span>(station_code, year, month) {</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  month_str <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">"%02d"</span>, month)  <span class="co"># Format month as "01", "02", etc.</span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  file_url <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(base_url_template, station_code, year, month_str)</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  response <span class="ot">&lt;-</span> <span class="fu">tryCatch</span>({</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">GET</span>(file_url)</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  }, <span class="at">error =</span> <span class="cf">function</span>(e) {</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">message</span>(<span class="fu">sprintf</span>(<span class="st">"Error fetching: %s"</span>, file_url))</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(response) <span class="sc">&amp;&amp;</span> <span class="fu">status_code</span>(response) <span class="sc">==</span> <span class="dv">200</span>) {</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Read the CSV content into a dataframe</span></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    csv_data <span class="ot">&lt;-</span> <span class="fu">tryCatch</span>({</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>      <span class="fu">read_csv</span>(<span class="fu">content</span>(response, <span class="st">"raw"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    }, <span class="at">error =</span> <span class="cf">function</span>(e) {</span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>      <span class="fu">message</span>(<span class="fu">sprintf</span>(<span class="st">"Failed to read CSV: %s"</span>, file_url))</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    })</span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(csv_data)) {</span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>      <span class="fu">write_csv</span>(csv_data, save_file, <span class="at">append =</span> <span class="cn">TRUE</span>)  <span class="co"># Append data to single CSV</span></span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>      <span class="fu">message</span>(<span class="fu">sprintf</span>(<span class="st">"Appended data for %s - %d-%s"</span>, station_code, year, month_str))</span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">message</span>(<span class="fu">sprintf</span>(<span class="st">"Failed to download: %s"</span>, file_url))</span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop through each station code and fetch data</span></span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (station_code <span class="cf">in</span> station_codes) {</span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (year <span class="cf">in</span> <span class="dv">2015</span><span class="sc">:</span><span class="dv">2024</span>) {</span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (month <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>) {</span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>      <span class="fu">download_and_append</span>(station_code, year, month)</span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Download process completed for all stations."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>The code chunk retrieves station codes and their corresponding types. These codes form part of a text string used to construct hyperlinks, which retrieve data directly from the weather website. There are three station types:</p>
+<p>Full AWS station: collects weather data on rainfall, temperature, and wind. Rainfall station: collects rainfall data only. Closed station: a station that is no longer operational. These station identifiers are useful for data filtering, analysis, and visualization based on specific station characteristics.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(httr)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
@@ -374,6 +309,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Download process completed for all stations."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>The code chunk systematically downloads daily climate data from Singapore’s weather service for multiple weather stations, covering years 2015 through 2024. It constructs URLs dynamically based on station codes, year, and month, retrieves CSV files, filters out incomplete or invalid entries, and then consolidates valid data into a single CSV file (Climate_Data_2018\5_2024.csv). The primary intention is to compile a structured, comprehensive dataset of climate measurements for subsequent data processing, analysis or visualization tasks.</p>
 
 
 

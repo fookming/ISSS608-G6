@@ -12,106 +12,22 @@ station_records <- read_excel("data/Station_Records.xlsx")
 
 # Obtain a list of station codes
 station_codes <- station_records$`code`
+station_type <- station_records$`Station_Type`
 
 print(station_codes)
 ```
-
 ```{r}
-#| eval: false
-
-
-# Set base URL template and save directory
-base_url_template <- "http://www.weather.gov.sg/files/dailydata/DAILYDATA_%s_%d%s.csv"
-save_directory <- "data/climate_historical_daily_records"
-dir.create(save_directory, recursive = TRUE, showWarnings = FALSE)
-
-# Loop through each station code
-for (station_code in station_codes) {
-  # Loop through each year and month
-  for (year in 2014:2023) {
-    for (month in 1:12) {
-      # Format the month properly as a string
-      month_str <- sprintf("%02d", month)
-      
-      # Construct the full URL
-      file_url <- sprintf(base_url_template, station_code, year, month_str)
-      
-      # Make the request and save the file
-      response <- GET(file_url)
-      
-      # Check if the request was successful (status code 200)
-      if (status_code(response) == 200) {
-        file_path <- sprintf("%s/DAILYDATA_%s_%d%s.csv", save_directory, station_code, year, month_str)
-        writeBin(content(response, "raw"), file_path)
-        print(paste("Downloaded:", file_path))
-      } else {
-        print(paste("Failed to download:", file_url))
-      }
-    }
-  }
-}
-
-print("Download process completed for all stations.")
+print(station_type)
 ```
 
-```{r}
-#| eval: false
 
-library(httr)
-library(readr)
+The code chunk retrieves station codes and their corresponding types. These codes form part of a text string used to construct hyperlinks, which retrieve data directly from the weather website. There are three station types:
 
-# Set base URL template and save file path
-base_url_template <- "http://www.weather.gov.sg/files/dailydata/DAILYDATA_%s_%d%s.csv"
-save_file <- "data/climate_historical_daily_records/Climate_Data_2015_2024_v1_1.csv"
-dir.create(dirname(save_file), recursive = TRUE, showWarnings = FALSE)
+Full AWS station: collects weather data on rainfall, temperature, and wind.
+Rainfall station: collects rainfall data only.
+Closed station: a station that is no longer operational.
+These station identifiers are useful for data filtering, analysis, and visualization based on specific station characteristics.
 
-# Initialize CSV file if it doesn't exist
-if (!file.exists(save_file)) {
-  write.csv(data.frame(), save_file, row.names = FALSE)
-}
-
-# Function to download and append data
-download_and_append <- function(station_code, year, month) {
-  month_str <- sprintf("%02d", month)  # Format month as "01", "02", etc.
-  file_url <- sprintf(base_url_template, station_code, year, month_str)
-
-  response <- tryCatch({
-    GET(file_url)
-  }, error = function(e) {
-    message(sprintf("Error fetching: %s", file_url))
-    return(NULL)
-  })
-
-  if (!is.null(response) && status_code(response) == 200) {
-    # Read the CSV content into a dataframe
-    csv_data <- tryCatch({
-      read_csv(content(response, "raw"), show_col_types = FALSE)
-    }, error = function(e) {
-      message(sprintf("Failed to read CSV: %s", file_url))
-      return(NULL)
-    })
-    
-    if (!is.null(csv_data)) {
-      write_csv(csv_data, save_file, append = TRUE)  # Append data to single CSV
-      message(sprintf("Appended data for %s - %d-%s", station_code, year, month_str))
-    }
-  } else {
-    message(sprintf("Failed to download: %s", file_url))
-  }
-}
-
-# Loop through each station code and fetch data
-for (station_code in station_codes) {
-  for (year in 2015:2024) {
-    for (month in 1:12) {
-      download_and_append(station_code, year, month)
-    }
-  }
-}
-
-print("Download process completed for all stations.")
-
-```
 
 ```{r}
 #| eval: false
@@ -195,3 +111,11 @@ print("Download process completed for all stations.")
 
 
 ```
+
+The code chunk systematically downloads daily climate data from Singapore’s weather service for multiple weather stations, covering years 2015 through 2024. It constructs URLs dynamically based on station codes, year, and month, retrieves CSV files, filters out incomplete or invalid entries, and then consolidates valid data into a single CSV file (Climate_Data_2018\5_2024.csv). The primary intention is to compile a structured, comprehensive dataset of climate measurements for subsequent data processing, analysis or visualization tasks.
+
+
+
+
+
+
