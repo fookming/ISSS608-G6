@@ -29,8 +29,8 @@ forecasting_ui <- function(id) {
         selectInput(ns("variable"), "Variable:", choices = NULL),
         selectInput(ns("station"), "Station:", choices = NULL),
         numericInput(ns("forecast_horizon"), "Forecast Horizon:", value = 12, min = 1),
-        selectInput(ns("model"), "Model:", choices = c("ARIMA", "ETS", "Prophet")),
-        radioButtons(ns("time_view"), "View Data By:", choices = c("Day", "Week", "Month"), inline = TRUE),
+        selectInput(ns("model"), "Model:", choices = c("ARIMA", "ETS", "Prophet"),selected = "Prophet"),
+        radioButtons(ns("time_view"), "View Data By:", choices = c("Day", "Week", "Month"), inline = TRUE, selected="Month"),
         radioButtons(ns("time_period"), "Time Period:", choices = c("Custom", "All (2018-2024)"), inline = TRUE),
         dateInput(ns("start_date"), "Start Date:", value = "2018-01-01"),
         dateInput(ns("end_date"), "End Date:", value = "2024-12-31")
@@ -128,6 +128,7 @@ forecasting_ui <- function(id) {
                        width = 12,
                        height = "250px",  # approx. 20%
                        status = "info",
+                       actionButton(ns("evaluate_forecast"), "Evaluate Forecast Models"),
                        tableOutput(ns("forecast_eval_table"))
                      )
               )
@@ -138,7 +139,7 @@ forecasting_ui <- function(id) {
             fluidRow(
               column(width = 12,
                      bs4Card(
-                       title = "Interactive Forecast with Tooltips",
+                       title = "Interactive Forecast",
                        width = 12,
                        height = "600px",  # approx. 80%
                        status = "success",

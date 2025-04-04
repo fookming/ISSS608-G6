@@ -1,12 +1,19 @@
-
 # ---------------------------------------------------------
 # Load Packages
 # ---------------------------------------------------------
-pacman::p_load(
-  shiny, bs4Dash, plotly, shinyWidgets)
+library(methods)     # Required for S4 methods (like coerce)
+library(sp)          # Required for STFDF, Raster* classes
+library(raster)      # Used internally by gstat; load before gstat
+library(gstat)       # Load after sp and raster to avoid coerce error
+
+# Core Shiny App Packages
+library(shiny)
+library(bs4Dash)
+library(shinyWidgets)
+library(plotly)
 
 # EFM
-library(shinyjs)  # clearly add this line explicitly
+library(shinyjs) # clearly add this line explicitly
 library(forecast)
 library(memoise)
 library(cachem)
@@ -15,9 +22,19 @@ library(prophet)
 library(ggplot2)
 library(lubridate)
 
-#Phuong
-pacman::p_load(bs4Dash, shiny, shinyWidgets, tidyverse, tmap, sf, sfdep, corrplot, terra,
-               gstat, automap,  SpatialML, GWmodel, Metrics, ggrepel, leaflet)
+# Phuong
+library(tidyverse)
+library(tmap)
+library(sf)
+library(sfdep)
+library(corrplot)
+library(terra)
+library(automap)
+library(SpatialML)
+library(GWmodel)
+library(Metrics)
+library(ggrepel)
+library(leaflet)
 
 # ---------------------------------------------------------
 # Dashboard Page Layout
@@ -27,7 +44,6 @@ source("forecasting_ui.R")
 
 dashboardPage(
   title = "WeatherWise Singapore",
-
   header = dashboardHeader(
     title = dashboardBrand(
       title = "WeatherWise SG",
@@ -38,14 +54,14 @@ dashboardPage(
     fixed = TRUE,
     controlbarIcon = NULL,
     fullscreenIcon = NULL,
-    rightUi = NULL  
+    rightUi = NULL
   ),
-  
+
 
   # Sidebar Menu (Navigation)
   sidebar = dashboardSidebar(
     skin = "light",
-    status = "info",
+    status = "primary",
     title = NULL,
     bs4SidebarMenu(
       bs4SidebarMenuItem("Landing Page", tabName = "landing", icon = icon("home")),
@@ -71,8 +87,7 @@ dashboardPage(
 
   # Main Body (Tab Content Area)
   body = dashboardBody(
-
-    useShinyjs(),  # <-- clearly put this at the top of dashboardBody
+    useShinyjs(), # <-- clearly put this at the top of dashboardBody
 
     # CSS overlay style
     tags$head(
@@ -82,33 +97,33 @@ dashboardPage(
         .main-header .brand-link {
           background-color: #17a2b8 !important;  /* Bootstrap 'info' color */
         }
-        
+
         /* Sidebar font sizes */
         .nav-sidebar .nav-link,
         .nav-sidebar .nav-link span {
           font-size: 14px !important;
         }
-  
+
         .nav-sidebar .nav-treeview .nav-link {
           font-size: 14px !important;
         }
-        
+
         /* Reduce font size of labels for inputs */
         .shiny-input-container > label {
           font-size: 0.88em !important;
         }
-    
+
         /* Reduce font size inside selectize/dropdown inputs */
         .selectize-input,
         .selectize-dropdown-content {
           font-size: 0.90em !important;
         }
-    
+
         /* Optional: reduce font size for all input fields generally */
         .form-control {
           font-size: 0.85em !important;
         }
-        
+
         #loading-overlay {
           position: fixed;
           top: 0; left: 0;
@@ -143,10 +158,111 @@ dashboardPage(
     bs4TabItems(
       bs4TabItem(
         tabName = "landing",
-        h2("A Visual Exploration Tool for Singapore's Weather"),
-        p("Understanding Singapore's changing weather..."), # You can use HTML for formatting
-        h4("Overview of modules in app")
-      ),
+        
+        fluidRow(
+          # Left Side
+          column(
+            width = 8,
+            
+            bs4Card(
+              title = "Welcome !",
+              width = 12,
+              status = "primary",
+              solidHeader = TRUE,
+              collapsible = FALSE,
+              p("Singapore’s tropical climate presents complex challenges for urban planning, infrastructure, and risk management due to high temperatures, intense humidity, and frequent rainfall."),
+              p("This dashboard offers a comprehensive, standalone weather analytics solution tailored to Singapore’s unique climate. It explores historical weather trends, integrates advanced statistical methods, spatial visualisation, and predictive modelling to empower users with actionable insights for strategic and climate-resilient planning across industries."),
+              p(HTML("The historical data was obtained from the <a href = 'https://www.weather.gov.sg/climate-historical-daily/'>Meteorological Service Singapore</a>."))
+            ),
+            
+            bs4Card(
+              title = "Dashboard Modules Overview",
+              width = 12,
+              solidHeader = TRUE,
+              status = "primary",
+              collapsible = FALSE,
+              icon = icon("layer-group"),
+              p(
+                strong("1. Exploratory Data Analysis:"), 
+                "Explore Singapore’s weather patterns through interactive charts and visual summaries."
+              ),
+              p(
+                strong("2. Confirmatory Data Analysis:"), 
+                "Statistical testing to validate patterns observed in the EDA section. Users can test for significant differences between groups and explore normality and distributional assumptions."
+              ),
+              p(
+                strong("3. Time Series Forecasting:"), 
+                "Identify long-term and seasonal patterns using rolling averages and seasonal plots. Includes decomposition techniques to separate trend, seasonality, and residuals. Users can statistically analyze weather fluctuations and forecast future trends using models like ARIMA, Prophet, or Exponential Smoothing to assess future climate risks and variations."
+              ),
+              p(
+                strong("4. Geo-Spatial Analysis:"), 
+                " Visualize extreme weather events and perform spatial interpolation using IDW and Kriging."
+              )
+            )
+          ),
+          
+          # Right Side
+          column(
+            width = 4,
+            
+            # First row: Two summary boxes side by side
+            fluidRow(
+              bs4ValueBox(
+                value = HTML("<span style='font-size: 25px; font-weight: bold;'>15</span>"),
+                subtitle = "Weather Stations",
+                icon = icon("map-marker-alt", class = "fa-1x"),
+                color = "success",
+                width = 6
+              ),
+              bs4ValueBox(
+                value = HTML("<span style='font-size: 23px; font-weight: bold;'>2018–2024</span>"),
+                subtitle = "Data Coverage",
+                icon = icon("calendar-alt", class = "fa-1x"),
+                color = "success",
+                width = 6
+              )
+            ),
+            
+            # Second row: One full-width summary box
+            fluidRow(
+              bs4ValueBox(
+                value = HTML("<span style='font-size: 23px; font-weight: bold;'>5</span>"),
+                subtitle = HTML("Weather Parameters: <span style='font-size: 14px;'>Rainfall Total, Temperature (Mean/Max/Min), Mean Wind Speed</span>"),
+                icon = icon("database", class = "fa-1x"),
+                color = "success",
+                width = 12
+              )
+            ),
+            
+            # Third row: First image full-width
+            fluidRow(
+              column(
+                width = 12,
+                bs4Card(
+                  title = "Trend",
+                  width = 12,
+                  solidHeader = TRUE,
+                  img(src = "trend_plot.png", width = "100%")
+                )
+              )
+            ),
+            
+            # Fourth row: Second image full-width
+            fluidRow(
+              column(
+                width = 12,
+                bs4Card(
+                  title = "Geospatial Interpolation",
+                  width = 12,
+                  solidHeader = TRUE,
+                  img(src = "geo_map.png", width = "100%")
+                )
+              )
+            )
+          )
+        )
+      )
+      ,
       bs4TabItem(
         tabName = "eda_overview",
         fluidRow(
@@ -163,7 +279,7 @@ dashboardPage(
               collapsed = TRUE,
               status = "info",
               solidHeader = TRUE,
-              p("This section gives a high-level overview of Singapore's weather across years.")
+              p("Presents high-level summaries such as yearly/monthly/station trends and key statistics (e.g., hottest day, rainiest month)")
             ),
 
             # Filter Box
@@ -171,7 +287,7 @@ dashboardPage(
               title = "Filters",
               width = 12,
               solidHeader = TRUE,
-              status = "info",
+              status = "primary",
               selectInput(
                 inputId = "eda_overview_parameter",
                 label = "Select Parameter:",
@@ -188,7 +304,7 @@ dashboardPage(
               title = uiOutput("eda_overview_title"),
               width = 12,
               solidHeader = TRUE,
-              status = "info",
+              status = "primary",
 
               # -- Top Row: Line Chart + Value Boxes --
               fluidRow(
@@ -214,11 +330,11 @@ dashboardPage(
               fluidRow(
                 column(
                   width = 6,
-                  plotlyOutput("overview_yearly_plot", height = "220px")
+                  plotlyOutput("overview_yearly_plot", height = "230px")
                 ),
                 column(
                   width = 6,
-                  plotlyOutput("overview_5_stations_plot", height = "220px")
+                  plotlyOutput("overview_5_stations_plot", height = "230px")
                 )
               )
             )
@@ -239,7 +355,7 @@ dashboardPage(
               collapsed = TRUE,
               status = "info",
               solidHeader = TRUE,
-              p("This view shows seasonal trends and cycles in weather patterns.")
+              p("Highlights seasonal trends and repeating patterns across months and years for various parameters and stations.")
             )
           ),
 
@@ -250,7 +366,7 @@ dashboardPage(
               title = "Seasonality Charts",
               width = 12,
               solidHeader = TRUE,
-              status = "info",
+              status = "primary",
 
               # -- Filters in Single Line Centered --
               div(
@@ -316,7 +432,7 @@ dashboardPage(
                   title = "Filters",
                   width = 12,
                   solidHeader = TRUE,
-                  status = "info",
+                  status = "primary",
                   selectInput("eda_station_param_1", "Select Parameter", choices = c("Loading..." = "loading")), # set dynamically in server
 
                   selectInput("eda_station_time_1", "Select Time Interval", choices = c("Loading..." = "loading")) # set dynamically in server
@@ -327,7 +443,7 @@ dashboardPage(
                 fluidRow(
                   box(
                     title = "Chart", width = 12, solidHeader = TRUE,
-                    status = "info", collapsible = FALSE,
+                    status = "primary", collapsible = FALSE,
                     plotlyOutput("station_dist_plot")
                   )
                 )
@@ -359,7 +475,7 @@ dashboardPage(
                   title = "Filters",
                   width = 12,
                   solidHeader = TRUE,
-                  status = "info",
+                  status = "primary",
                   selectInput("eda_station_param_2", "Select Parameter", choices = c("Loading..." = "loading")), # set dynamically in server
 
                   selectInput("eda_station_time_2", "Select Time Interval", choices = c("Loading..." = "loading")) # set dynamically in server
@@ -370,7 +486,7 @@ dashboardPage(
                 fluidRow(
                   box(
                     title = "Chart", width = 12, solidHeader = TRUE,
-                    status = "info", collapsible = FALSE,
+                    status = "primary", collapsible = FALSE,
                     plotlyOutput("month_station_heatmap")
                   )
                 )
@@ -395,7 +511,7 @@ dashboardPage(
               collapsed = TRUE,
               solidHeader = TRUE,
               status = "info",
-              p("This page allows you to check for normality and run statistical tests across selected weather stations and time periods.")
+              p("This page allows you to check for normality and run statistical tests between stations for a selected metric and period.")
             ),
 
             # Filter Box
@@ -403,10 +519,10 @@ dashboardPage(
               title = "Filters",
               width = 12,
               solidHeader = TRUE,
-              status = "info",
+              status = "primary",
               selectInput("cda_station_param", "Select Parameter", choices = c("Loading..." = "loading")),
               selectInput("cda_station_time_type", "Select Time Interval",
-                choices = c("Overall", "Year", "Month"), selected = "Overall"
+                choices = c("Year", "Month"), selected = "Year"
               ),
               uiOutput("cda_station_time_picker"),
               selectizeInput("cda_station_list", "Select Station(s)",
@@ -424,7 +540,7 @@ dashboardPage(
               title = "Statistical Test Parameters",
               width = 12,
               solidHeader = TRUE,
-              status = "info",
+              status = "primary",
               selectInput("cda_station_test_type", "Test Type",
                 choices = c("Parametric", "Non-Parametric", "Robust", "Bayes-Factor"),
                 selected = "Non-Parametric"
@@ -433,7 +549,7 @@ dashboardPage(
                 choices = c("90%", "95%", "99%"),
                 selected = "95%"
               ),
-              actionButton("cda_station_test_btn", "Run Test", class = "btn-outline-info", width = "100%")
+              actionButton("cda_station_test_btn", "Run Test", class = "btn-outline-primary", width = "100%")
             )
           ),
 
@@ -448,7 +564,7 @@ dashboardPage(
               solidHeader = TRUE,
               collapsible = TRUE,
               collapsed = TRUE,
-              status = "info",
+              status = "primary",
               dataTableOutput("cda_ad_table")
             ),
 
@@ -457,7 +573,7 @@ dashboardPage(
               title = "Statistical Test Results",
               width = 12,
               solidHeader = TRUE,
-              status = "info",
+              status = "primary",
               plotOutput("cda_station_test_plot", height = "400px")
             )
           )
@@ -479,7 +595,7 @@ dashboardPage(
               collapsed = TRUE,
               solidHeader = TRUE,
               status = "info",
-              p("This page allows you to check for normality and run statistical tests across selected weather stations and time periods.")
+              p("This page allows you to check for normality and run statistical tests for a metric across time (e.g., months, years) within a station")
             ),
 
             # Filter Box
@@ -487,7 +603,7 @@ dashboardPage(
               title = "Filters",
               width = 12,
               solidHeader = TRUE,
-              status = "info",
+              status = "primary",
               selectInput("cda_time_param", "Select Parameter", choices = c("Loading..." = "loading")),
               selectizeInput("cda_time_station_list", "Select Station",
                 choices = NULL,
@@ -512,7 +628,7 @@ dashboardPage(
               title = "Statistical Test Parameters",
               width = 12,
               solidHeader = TRUE,
-              status = "info",
+              status = "primary",
               selectInput("cda_time_test_type", "Test Type",
                 choices = c("Parametric", "Non-Parametric", "Robust", "Bayes-Factor"),
                 selected = "Non-Parametric"
@@ -521,7 +637,7 @@ dashboardPage(
                 choices = c("90%", "95%", "99%"),
                 selected = "95%"
               ),
-              actionButton("cda_time_test_btn", "Run Test", class = "btn-outline-info", width = "100%")
+              actionButton("cda_time_test_btn", "Run Test", class = "btn-outline-primary", width = "100%")
             )
           ),
 
@@ -536,7 +652,7 @@ dashboardPage(
               solidHeader = TRUE,
               collapsible = TRUE,
               collapsed = TRUE,
-              status = "info",
+              status = "primary",
               dataTableOutput("cda_time_ad_table")
             ),
 
@@ -545,278 +661,303 @@ dashboardPage(
               title = "Statistical Test Results",
               width = 12,
               solidHeader = TRUE,
-              status = "info",
+              status = "primary",
               plotOutput("cda_time_test_plot", height = "400px")
             )
           )
         )
       ),
       bs4TabItem(tabName = "forecasting", forecasting_ui("forecasting"), icon = icon("chart-line")),
-      bs4TabItem(tabName = "geo_extreme",
-                 fluidRow(
-                   # Left panel - dropdown filter
-                   column(
-                     width = 3,
-                     
-                     #  Info Box (collapsible)
-                     box(
-                       title = tags$span(icon("info-circle"), "About"),
-                       width = 12,
-                       collapsible = TRUE,
-                       collapsed = TRUE,
-                       status = "info",
-                       solidHeader = TRUE,
-                       p("This interactive map shows extreme weather events according to selection.")
-                     ),
-                     
-                     #  Parameter Control Panel
-                     box(
-                       title = "Filters",
-                       width = 12,
-                       solidHeader = TRUE,
-                       status = "primary",
-                       collapsible = FALSE,
-                       selectInput(
-                         inputId = "geo_extreme_weather_var",
-                         label = "Select Parameter",
-                         choices = c("Daily Rainfall" = "Daily Rainfall Total (mm)",
-                                     "Mean Temperature" = "Mean Temperature (Celsius)",
-                                     "Maximum Temperature" = "Maximum Temperature (Celsius)",
-                                     "Minimum Temperature" = "Minimum Temperature (Celsius)",
-                                     "Mean Wind Speed" = "Mean Wind Speed (km/h)"),
-                         selected = "Mean Temperature (Celsius)"
-                       ),
-                       
-                       selectInput(
-                         inputId = "geo_extreme_time_interval",
-                         label = "Select Time Interval",
-                         choices = c("Month", "Year"),
-                         selected = "Year"
-                       ),
-                       # Show Month-Year Picker when "Month" is selected
-                       conditionalPanel(
-                         condition = "input.geo_extreme_time_interval == 'Month'",
-                         airDatepickerInput("geo_extreme_month_input", "Select Year & Month", 
-                                            view = "months",
-                                            minView = 'months',
-                                            minDate = "2018-01-01",maxDate = "2024-12-31",
-                                            dateFormat = "yyyy-MM",
-                                            autoClose = TRUE,
-                                            value = "2024-12")
-                       ),
-                       # Show Year Picker when "Year" is selected
-                       conditionalPanel(
-                         condition = "input.geo_extreme_time_interval == 'Year'",
-                         airDatepickerInput("geo_extreme_year_input", "Select Year", 
-                                            view = "years",
-                                            minView = 'years',
-                                            minDate = "2018-01-01",maxDate = "2024-12-31",
-                                            dateFormat = "yyyy",
-                                            autoClose = TRUE,
-                                            value = "2024")
-                       )
-                     )
-                   ),
-                   
-                   # Main panel: charts, value boxes, etc.
-                   column(
-                     width = 9,
-                     fluidRow(
-                       box(title = "Interactive Map", width = 12, solidHeader = TRUE,
-                           status = "primary", collapsible = FALSE,
-                           leafletOutput("geo_extreme_map")
-                       )
-                     )
-                     # Add more charts or value boxes here later
-                   )
-                 )
+      bs4TabItem(
+        tabName = "geo_extreme",
+        fluidRow(
+          # Left panel - dropdown filter
+          column(
+            width = 3,
+
+            #  Info Box (collapsible)
+            box(
+              title = tags$span(icon("info-circle"), "About"),
+              width = 12,
+              collapsible = TRUE,
+              collapsed = TRUE,
+              status = "info",
+              solidHeader = TRUE,
+              p("This interactive map shows extreme weather events according to selection.")
+            ),
+
+            #  Parameter Control Panel
+            box(
+              title = "Filters",
+              width = 12,
+              solidHeader = TRUE,
+              status = "primary",
+              collapsible = FALSE,
+              selectInput(
+                inputId = "geo_extreme_weather_var",
+                label = "Select Parameter",
+                choices = c(
+                  "Daily Rainfall" = "Daily Rainfall Total (mm)",
+                  "Mean Temperature" = "Mean Temperature (Celsius)",
+                  "Maximum Temperature" = "Maximum Temperature (Celsius)",
+                  "Minimum Temperature" = "Minimum Temperature (Celsius)",
+                  "Mean Wind Speed" = "Mean Wind Speed (km/h)"
+                ),
+                selected = "Mean Temperature (Celsius)"
+              ),
+              selectInput(
+                inputId = "geo_extreme_time_interval",
+                label = "Select Time Interval",
+                choices = c("Month", "Year"),
+                selected = "Year"
+              ),
+              # Show Month-Year Picker when "Month" is selected
+              conditionalPanel(
+                condition = "input.geo_extreme_time_interval == 'Month'",
+                airDatepickerInput("geo_extreme_month_input", "Select Year & Month",
+                  view = "months",
+                  minView = "months",
+                  minDate = "2018-01-01", maxDate = "2024-12-31",
+                  dateFormat = "yyyy-MM",
+                  autoClose = TRUE,
+                  value = "2024-12"
+                )
+              ),
+              # Show Year Picker when "Year" is selected
+              conditionalPanel(
+                condition = "input.geo_extreme_time_interval == 'Year'",
+                airDatepickerInput("geo_extreme_year_input", "Select Year",
+                  view = "years",
+                  minView = "years",
+                  minDate = "2018-01-01", maxDate = "2024-12-31",
+                  dateFormat = "yyyy",
+                  autoClose = TRUE,
+                  value = "2024"
+                )
+              )
+            )
+          ),
+
+          # Main panel: charts, value boxes, etc.
+          column(
+            width = 9,
+            fluidRow(
+              box(
+                title = "Interactive Map", width = 12, solidHeader = TRUE,
+                status = "primary", collapsible = FALSE,
+                leafletOutput("geo_extreme_map")
+              )
+            )
+            # Add more charts or value boxes here later
+          )
+        )
       ),
-      
-      bs4TabItem(tabName = "geo_interpolation",
-                 fluidRow(
-                   # Left panel - dropdown filter
-                   column(
-                     width = 2,
-                     
-                     #  Info Box (collapsible)
-                     box(
-                       title = tags$span(icon("info-circle"), "About"),
-                       width = 12,
-                       collapsible = TRUE,
-                       collapsed = TRUE,
-                       status = "info",
-                       solidHeader = TRUE,
-                       p("This map visualize interpolated values of selected weather measurements on Singapore map")
-                     ),
-                     
-                     #  Parameter Control Panel
-                     box(
-                       title = "Filters",
-                       width = 12,
-                       solidHeader = TRUE,
-                       status = "primary",
-                       collapsible = FALSE,
-                       selectInput(
-                         inputId = "geo_inter_weather_var",
-                         label = "Select Parameter",
-                         choices = c("Daily Rainfall" = "Daily Rainfall Total (mm)",
-                                     "Mean Temperature" = "Mean Temperature (Celsius)",
-                                     "Maximum Temperature" = "Maximum Temperature (Celsius)",
-                                     "Minimum Temperature" = "Minimum Temperature (Celsius)",
-                                     "Mean Wind Speed" = "Mean Wind Speed (km/h)"),
-                         selected = "Mean Temperature (Celsius)"
-                       ),
-                       
-                       selectInput(
-                         inputId = "geo_inter_time_interval",
-                         label = "Select Time Interval",
-                         choices = c("Month", "Year"),
-                         selected = "Year"
-                       ),
-                       # Show Month-Year Picker when "Month" is selected
-                       conditionalPanel(
-                         condition = "input.geo_inter_time_interval == 'Month'",
-                         airDatepickerInput("geo_inter_month_input", "Select Year & Month", 
-                                            view = "months",
-                                            minView = 'months',
-                                            minDate = "2018-01-01",maxDate = "2024-12-31",
-                                            dateFormat = "yyyy-MM",
-                                            autoClose = TRUE,
-                                            value = "2024-12")
-                       ),
-                       # Show Year Picker when "Year" is selected
-                       conditionalPanel(
-                         condition = "input.geo_inter_time_interval == 'Year'",
-                         airDatepickerInput("geo_inter_year_input", "Select Year", 
-                                            view = "years",
-                                            minView = 'years',
-                                            minDate = "2018-01-01",maxDate = "2024-12-31",
-                                            dateFormat = "yyyy",
-                                            autoClose = TRUE,
-                                            value = "2024")
-                       )
-                     )
-                   ),
-                   
-                   # Main panel: charts, value boxes, etc.
-                   column(
-                     width = 10,
-                     tabsetPanel(
-                       id = 'geo_inter_tabs',
-                       type = 'tabs',
-                       tabPanel(
-                         "Inverse Distance Weighted Interpolation",br(),
-                         fluidRow(
-                           column(
-                             width = 2,
-                             box(
-                               title = "Interpolation Parameters",
-                               width = 12, 
-                               solidHeader = TRUE, 
-                               status = "primary",
-                               collapsible = FALSE,
-                               sliderInput(inputId = "geo_inter_nmax",
-                                           label = "Number of neighbors", 
-                                           min = 1, 
-                                           max = 10, 
-                                           value = 5, 
-                                           step = 1),
-                               sliderInput(inputId = "geo_inter_idp",
-                                           label = "Inverse distance power",
-                                           min = 0, 
-                                           max = 2.5, 
-                                           value = 1, 
-                                           step = 0.1),
-                               actionButton(inputId = "geo_idw_update_map", 
-                                            label = "Update Map",
-                                            class = "btn-primary")
-                             )
-                           ),
-                           column(
-                             width = 10,
-                             box(
-                               title = "Static Map", width = 12, 
-                               solidHeader = TRUE, status = "primary",
-                               collapsible = FALSE,
-                               tmapOutput("geo_inter_idw_map")
-                             )
-                           )
-                         )
-                       ),
-                       tabPanel(
-                         "Ordinary Kriging Interpolation", br(),
-                         fluidRow(
-                           column(
-                             width = 2,
-                             box(
-                               title = "Interpolation Parameters",
-                               width = 12, 
-                               solidHeader = TRUE, 
-                               status = "primary",
-                               collapsible = FALSE,
-                               selectInput(
-                                 inputId = "geo_inter_model",
-                                 label = "model",
-                                 choices = c("Exp", "Sph", "Gau", "Mat","Nug","Exc",
-                                             "Ste","Cir","Lin","Bes","Pen","Per",
-                                             "Wav","Hol","Log","Pow","Spl"),
-                                 selected = "Sph"),
-                               sliderInput(inputId = "geo_inter_psill",
-                                           label = "psill", 
-                                           min = 0.5, 
-                                           max = 10, 
-                                           value = 0.5, 
-                                           step = 0.5),
-                               sliderInput(inputId = "geo_inter_range",
-                                           label = "range",
-                                           min = 1000, 
-                                           max = 10000, 
-                                           value = 5000, 
-                                           step = 1000),
-                               sliderInput(inputId = "geo_inter_nugget",
-                                           label = "nugget",
-                                           min = 0.1, 
-                                           max = 10, 
-                                           value = 0.1, 
-                                           step = 0.1),
-                               actionButton(inputId = "geo_kriging_update_map", 
-                                            label = "Update Map",
-                                            class = "btn-primary")
-                             )
-                           ),
-                           column(
-                             width = 5,
-                             box(
-                               title = "Manually Fitted Variogram", width = 12, 
-                               solidHeader = TRUE, status = "primary",
-                               collapsible = FALSE,
-                               tmapOutput("geo_kriging_manual_map")
-                             )
-                           ),
-                           column(
-                             width = 5,
-                             box(
-                               title = "Automatically Fitted Variogram",
-                               width = 12,
-                               solidHeader = TRUE,
-                               status = 'primary',
-                               collapsible = FALSE,
-                               tmapOutput("geo_kriging_auto_map")
-                             )
-                           )
-                         )
-                       )
-                     )
-                   )
-                 )
+      bs4TabItem(
+        tabName = "geo_interpolation",
+        fluidRow(
+          # Left panel - dropdown filter
+          column(
+            width = 2,
+
+            #  Info Box (collapsible)
+            box(
+              title = tags$span(icon("info-circle"), "About"),
+              width = 12,
+              collapsible = TRUE,
+              collapsed = TRUE,
+              status = "info",
+              solidHeader = TRUE,
+              p("This map visualize interpolated values of selected weather measurements on Singapore map")
+            ),
+
+            #  Parameter Control Panel
+            box(
+              title = "Filters",
+              width = 12,
+              solidHeader = TRUE,
+              status = "primary",
+              collapsible = FALSE,
+              selectInput(
+                inputId = "geo_inter_weather_var",
+                label = "Select Parameter",
+                choices = c(
+                  "Daily Rainfall" = "Daily Rainfall Total (mm)",
+                  "Mean Temperature" = "Mean Temperature (Celsius)",
+                  "Maximum Temperature" = "Maximum Temperature (Celsius)",
+                  "Minimum Temperature" = "Minimum Temperature (Celsius)",
+                  "Mean Wind Speed" = "Mean Wind Speed (km/h)"
+                ),
+                selected = "Mean Temperature (Celsius)"
+              ),
+              selectInput(
+                inputId = "geo_inter_time_interval",
+                label = "Select Time Interval",
+                choices = c("Month", "Year"),
+                selected = "Year"
+              ),
+              # Show Month-Year Picker when "Month" is selected
+              conditionalPanel(
+                condition = "input.geo_inter_time_interval == 'Month'",
+                airDatepickerInput("geo_inter_month_input", "Select Year & Month",
+                  view = "months",
+                  minView = "months",
+                  minDate = "2018-01-01", maxDate = "2024-12-31",
+                  dateFormat = "yyyy-MM",
+                  autoClose = TRUE,
+                  value = "2024-12"
+                )
+              ),
+              # Show Year Picker when "Year" is selected
+              conditionalPanel(
+                condition = "input.geo_inter_time_interval == 'Year'",
+                airDatepickerInput("geo_inter_year_input", "Select Year",
+                  view = "years",
+                  minView = "years",
+                  minDate = "2018-01-01", maxDate = "2024-12-31",
+                  dateFormat = "yyyy",
+                  autoClose = TRUE,
+                  value = "2024"
+                )
+              )
+            )
+          ),
+
+          # Main panel: charts, value boxes, etc.
+          column(
+            width = 10,
+            tabsetPanel(
+              id = "geo_inter_tabs",
+              type = "tabs",
+              tabPanel(
+                "Inverse Distance Weighted Interpolation", br(),
+                fluidRow(
+                  column(
+                    width = 2,
+                    box(
+                      title = "Interpolation Parameters",
+                      width = 12,
+                      solidHeader = TRUE,
+                      status = "primary",
+                      collapsible = FALSE,
+                      sliderInput(
+                        inputId = "geo_inter_nmax",
+                        label = "Number of neighbors",
+                        min = 1,
+                        max = 10,
+                        value = 5,
+                        step = 1
+                      ),
+                      sliderInput(
+                        inputId = "geo_inter_idp",
+                        label = "Inverse distance power",
+                        min = 0,
+                        max = 2.5,
+                        value = 1,
+                        step = 0.1
+                      ),
+                      actionButton(
+                        inputId = "geo_idw_update_map",
+                        label = "Update Map",
+                        class = "btn-primary"
+                      )
+                    )
+                  ),
+                  column(
+                    width = 10,
+                    box(
+                      title = "Static Map", width = 12,
+                      solidHeader = TRUE, status = "primary",
+                      collapsible = FALSE,
+                      tmapOutput("geo_inter_idw_map")
+                    )
+                  )
+                )
+              ),
+              tabPanel(
+                "Ordinary Kriging Interpolation", br(),
+                fluidRow(
+                  column(
+                    width = 2,
+                    box(
+                      title = "Interpolation Parameters",
+                      width = 12,
+                      solidHeader = TRUE,
+                      status = "primary",
+                      collapsible = FALSE,
+                      selectInput(
+                        inputId = "geo_inter_model",
+                        label = "model",
+                        choices = c(
+                          "Exp", "Sph", "Gau", "Mat", "Nug", "Exc",
+                          "Ste", "Cir", "Lin", "Bes", "Pen", "Per",
+                          "Wav", "Hol", "Log", "Pow", "Spl"
+                        ),
+                        selected = "Sph"
+                      ),
+                      sliderInput(
+                        inputId = "geo_inter_psill",
+                        label = "psill",
+                        min = 0.5,
+                        max = 10,
+                        value = 0.5,
+                        step = 0.5
+                      ),
+                      sliderInput(
+                        inputId = "geo_inter_range",
+                        label = "range",
+                        min = 1000,
+                        max = 10000,
+                        value = 5000,
+                        step = 1000
+                      ),
+                      sliderInput(
+                        inputId = "geo_inter_nugget",
+                        label = "nugget",
+                        min = 0.1,
+                        max = 10,
+                        value = 0.1,
+                        step = 0.1
+                      ),
+                      actionButton(
+                        inputId = "geo_kriging_update_map",
+                        label = "Update Map",
+                        class = "btn-primary"
+                      )
+                    )
+                  ),
+                  column(
+                    width = 5,
+                    box(
+                      title = "Manually Fitted Variogram", width = 12,
+                      solidHeader = TRUE, status = "primary",
+                      collapsible = FALSE,
+                      tmapOutput("geo_kriging_manual_map")
+                    )
+                  ),
+                  column(
+                    width = 5,
+                    box(
+                      title = "Automatically Fitted Variogram",
+                      width = 12,
+                      solidHeader = TRUE,
+                      status = "primary",
+                      collapsible = FALSE,
+                      tmapOutput("geo_kriging_auto_map")
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
       )
-      
+
       # bs4TabItem(tabName = "geo_modelling",
       #            fluidRow(
       #              # Left panel - dropdown filter
       #              column(
       #                width = 2,
-      #                
+      #
       #                #  Info Box (collapsible)
       #                box(
       #                  title = tags$span(icon("info-circle"), "About"),
@@ -827,7 +968,7 @@ dashboardPage(
       #                  solidHeader = TRUE,
       #                  p("This view shows performance comparison between Non-spatial and Geographically Weighted Random Forest.")
       #                ),
-      #                
+      #
       #                #  Parameter Control Panel
       #                box(
       #                  title = "Filters",
@@ -845,7 +986,7 @@ dashboardPage(
       #                                "Mean Wind Speed" = "Mean Wind Speed (km/h)"),
       #                    selected = "Mean Temperature (Celsius)"
       #                  ),
-      #                  
+      #
       #                  selectInput(
       #                    inputId = "geo_fc_kernel",
       #                    label = "Select Kernel",
@@ -857,9 +998,9 @@ dashboardPage(
       #                    condition = "input.geo_fc_kernel == 'adaptive'",
       #                    sliderInput(inputId = "geo_fc_adapt_bw",
       #                                label = "bandwidth (# neighbors)",
-      #                                min = 300, 
-      #                                max = 2000, 
-      #                                value = 350, 
+      #                                min = 300,
+      #                                max = 2000,
+      #                                value = 350,
       #                                step = 50)
       #                  ),
       #                  # Show Fixed bw range when fixed kernel is selected
@@ -867,23 +1008,23 @@ dashboardPage(
       #                    condition = "input.geo_fc_kernel == 'fixed'",
       #                    sliderInput(inputId = "geo_fc_fixed_bw",
       #                                label = "bandwidth (meters)",
-      #                                min = 1000, 
-      #                                max = 20000, 
-      #                                value = 1000, 
+      #                                min = 1000,
+      #                                max = 20000,
+      #                                value = 1000,
       #                                step = 1000)
       #                  ),
-      #                  actionButton(inputId = "geo_fc_update_chart", 
+      #                  actionButton(inputId = "geo_fc_update_chart",
       #                               label = "Update Charts",
       #                               class = "btn-primary")
       #                )
       #              ),
-      #              
+      #
       #              # Main panel: charts, value boxes, etc.
       #              column(
       #                width = 10,
       #                fluidRow(
       #                  box(title = "Scatter Plots of Actual vs Predicted Values",
-      #                      width = 12, 
+      #                      width = 12,
       #                      solidHeader = TRUE,
       #                      status = "primary",
       #                      collapsible = FALSE,
@@ -892,9 +1033,8 @@ dashboardPage(
       #                )
       #                # Add more charts or value boxes here later
       #              )
-      #            )         
+      #            )
       #   )
-      
     )
   ),
   controlbar = dashboardControlbar(), # Optional

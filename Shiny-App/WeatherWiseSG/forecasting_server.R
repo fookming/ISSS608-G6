@@ -54,6 +54,98 @@ forecasting_server <- function(id) {
     
     
     
+    # Server logic for explicit forecast evaluation
+    observeEvent(input$evaluate_forecast, {
+      
+     
+      # Disable button explicitly
+      shinyjs::disable("evaluate_forecast")
+      
+      
+      req(filtered_aggregated_data(), input$forecast_horizon, input$time_view)
+      
+      data <- filtered_aggregated_data()
+      
+      # Number of test points (20% of data, minimum 6)
+      k <- max(6, round(nrow(data) * 0.2))
+      train <- head(data, -k)
+      test <- tail(data, k)
+      
+      ts_train <- ts(train$Value, frequency = switch(input$time_view,
+                                                     "Day" = 365, 
+                                                     "Week" = 52, 
+                                                     "Month" = 12))
+      
+      ts_test <- test$Value
+      
+      # ARIMA evaluation
+      fit_arima <- forecast(auto.arima(ts_train), h = k)
+      arima_metrics <- accuracy(fit_arima, ts_test)
+      
+      # ETS evaluation
+      fit_ets <- forecast(ets(ts_train), h = k)
+      ets_metrics <- accuracy(fit_ets, ts_test)
+      
+      # Prophet evaluation
+      df_prophet <- train %>% rename(ds = Date, y = Value)
+      model_prophet <- prophet(df_prophet, verbose = FALSE)
+      future <- make_future_dataframe(model_prophet, periods = k, 
+                                      freq = switch(input$time_view,
+                                                    "Day" = "day", 
+                                                    "Week" = "week", 
+                                                    "Month" = "month"))
+      forecast_prophet <- predict(model_prophet, future)
+      yhat <- tail(forecast_prophet$yhat, k)
+      
+      prophet_metrics <- c(
+        MAE = mean(abs(ts_test - yhat)),
+        RMSE = sqrt(mean((ts_test - yhat)^2)),
+        MAPE = mean(abs((ts_test - yhat) / ts_test)) * 100
+      )
+      
+      # Summary evaluation table
+      eval_table <- tibble::tibble(
+        Model = c("ARIMA", "ETS", "Prophet"),
+        MAE = round(c(arima_metrics["Test set", "MAE"], 
+                      ets_metrics["Test set", "MAE"], 
+                      prophet_metrics["MAE"]), 2),
+        RMSE = round(c(arima_metrics["Test set", "RMSE"], 
+                       ets_metrics["Test set", "RMSE"], 
+                       prophet_metrics["RMSE"]), 2),
+        MAPE = round(c(arima_metrics["Test set", "MAPE"], 
+                       ets_metrics["Test set", "MAPE"], 
+                       prophet_metrics["MAPE"]), 2)
+      )
+      
+      best_model <- eval_table$Model[which.min(eval_table$RMSE)]
+      eval_table <- eval_table %>% 
+        mutate(Recommendation = ifelse(Model == best_model, "✅ Recommended", ""))
+      
+      # Render the table explicitly
+      output$forecast_eval_table <- renderTable({
+        eval_table
+      })
+      
+      # Explicitly re-enable button after evaluation
+      shinyjs::enable("evaluate_forecast")
+      
+    })
+    
+    # Clear the evaluation table explicitly on relevant input change
+    observeEvent({
+      input$variable
+      input$station
+      input$time_view
+      input$time_period
+      input$start_date
+    }, {
+      output$forecast_eval_table <- renderTable(NULL)
+      shinyjs::enable("evaluate_forecast") # Ensure button explicitly enabled
+    })
+    
+    
+  
+    
     # Calculate Arima Order
     observeEvent(input$calc_arima, {
       
@@ -252,23 +344,24 @@ forecasting_server <- function(id) {
     
     # TABPANEL - FORECASTING
     
-    # Static Forecast Plot
+
+    
+    
     # Static Forecast Plot
     output$static_forecast_plot <- renderPlot({
       req(input$model, input$forecast_horizon, input$time_view, filtered_ts())
       
-      # Explicitly get filtered time-series
+      # Get filtered time-series explicitly
       ts_data <- filtered_ts()
       
-      # Adjust forecast horizon explicitly based on view selected
+      # Adjust forecast horizon based on selected view explicitly
       forecast_horizon <- as.numeric(input$forecast_horizon)
       
-      # Perform explicit forecasting based on model selected
+      # Perform forecasting based on selected model explicitly
       fc <- switch(input$model,
                    "ARIMA" = forecast(auto.arima(ts_data), h = forecast_horizon),
                    "ETS" = forecast(ets(ts_data), h = forecast_horizon),
                    "Prophet" = {
-                     # Convert ts_data explicitly into a dataframe with dates
                      df_prophet <- tibble(
                        ds = seq.Date(
                          from = min(filtered_aggregated_data()$Date),
@@ -278,41 +371,43 @@ forecasting_server <- function(id) {
                        ),
                        y = as.numeric(ts_data)
                      )
-                     
-                     # Explicitly fit the Prophet model
                      model <- prophet::prophet(df_prophet)
-                     
-                     # Explicitly create future dates for forecasting
                      future <- prophet::make_future_dataframe(
                        model,
                        periods = forecast_horizon,
                        freq = switch(input$time_view,
                                      "Day" = "day", "Week" = "week", "Month" = "month")
                      )
-                     
-                     # Explicitly compute the forecast
                      forecast <- predict(model, future)
-                     
-                     # Return both model and forecast explicitly as a list
                      list(model = model, forecast = forecast)
                    },
                    stop("Unsupported model explicitly chosen."))
       
-      # Explicit Plotting based on model
+      # Correct plot titles and labels explicitly
+      horizon_label <- paste0(forecast_horizon, " ", input$time_view, ifelse(forecast_horizon > 1, "s", ""))
+      
       if(input$model %in% c("ARIMA", "ETS")){
         autoplot(fc) +
-          ggtitle(paste(input$model, "Forecast (Horizon:", forecast_horizon, input$time_view, ")")) +
+          ggtitle(paste(input$model, "Forecast (Horizon:", horizon_label, ")")) +
+          xlab("Time") +
+          ylab(NULL) +
           theme_minimal()
-        
       } else if(input$model == "Prophet"){
         plot(fc$model, fc$forecast) +
-          ggtitle(paste("Prophet Forecast (Horizon:", forecast_horizon, input$time_view, ")")) +
+          ggtitle(paste("Prophet Forecast (Horizon:", horizon_label, ")")) +
+          xlab("Time") +
+          ylab(NULL) +
           theme_minimal()
       }
     })
     
     
+    
+    
+    
   
+    
+    
     # Interactive forecast plot
     output$interactive_forecast_plot <- renderPlotly({
       req(input$model, input$forecast_horizon, input$time_view, filtered_aggregated_data())
@@ -332,18 +427,21 @@ forecasting_server <- function(id) {
       
       forecast_horizon <- as.numeric(input$forecast_horizon)
       freq <- switch(input$time_view, "Day" = "day", "Week" = "week", "Month" = "month")
+      
+      # explicitly correct forecast start date
       last_date <- max(aggregated_data$period)
-      forecast_dates <- seq.Date(from = last_date + days(1), by = freq, length.out = forecast_horizon)
+      forecast_dates <- switch(input$time_view,
+                               "Day" = seq.Date(last_date + days(1), by = "day", length.out = forecast_horizon),
+                               "Week" = seq.Date(last_date + weeks(1), by = "week", length.out = forecast_horizon),
+                               "Month" = seq.Date(last_date %m+% months(1), by = "month", length.out = forecast_horizon))
       
       if (input$model == "ARIMA") {
         fc <- forecast(auto.arima(ts_data), h = forecast_horizon)
       } else if (input$model == "ETS") {
         fc <- forecast(ets(ts_data), h = forecast_horizon)
       } else if (input$model == "Prophet") {
-        
         # Correctly prepared aggregated historical data
-        df_prophet <- aggregated_data %>%
-          rename(ds = period, y = value)
+        df_prophet <- aggregated_data %>% rename(ds = period, y = value)
         
         # Prophet model fitting explicitly
         model <- prophet(df_prophet)
@@ -388,18 +486,11 @@ forecasting_server <- function(id) {
                    "Week" = paste0("Week: ", format(date, "%Y-%U")),
                    "Day" = paste0("Date: ", format(date, "%Y-%m-%d"))
             ),
-            "<br>Rainfall: ", round(value, 2), " ")
+            "<br>Rainfall: ", round(value, 2), "  ")
         )
       }
       
       connector_df <- plot_data %>% filter(row_number() %in% c(length(ts_data), length(ts_data) + 1))
-      
-  #    y_axis_title <- paste(switch(input$time_view,
-  #                                 "Day" = "Daily Total",
-  #                                 "Week" = "Weekly Total",
-  #                                 "Month" = "Monthly Total"), input$variable)
-      
-      
       
       y_axis_title <- paste(
         switch(input$time_view,
@@ -408,7 +499,6 @@ forecasting_server <- function(id) {
                "Month" = if (input$variable == "Daily Rainfall Total (mm)") "Monthly Total - " else "Monthly Mean - "),
         input$variable
       )
-      
       
       plot_ly() %>%
         add_ribbons(data = plot_data,
@@ -432,72 +522,12 @@ forecasting_server <- function(id) {
                   name = "Connector", text = ~text, hoverinfo = "text") %>%
         layout(title = paste("Interactive", input$model, "Forecast for", y_axis_title, "at", input$station),
                xaxis = list(title = "Date"),
-               yaxis = list(title = paste(y_axis_title, " ")))
-   #            yaxis = list(title = paste(y_axis_title, "(mm)")))
+               yaxis = list(title = paste(y_axis_title, "  ")))
     })
     
-    
-    
-    # Forecast Evaluation Table
-    output$forecast_eval_table <- renderTable({
-      req(filtered_aggregated_data(), input$forecast_horizon)
-      
-      data <- filtered_aggregated_data()
-      
-      # Use the last `k` points as test set (min 6)
-      k <- max(6, round(nrow(data) * 0.2))
-      train <- head(data, -k)
-      test <- tail(data, k)
-      
-      ts_train <- ts(train$Value, frequency = switch(input$time_view,
-                                                     "Day" = 365, "Week" = 52, "Month" = 12))
-      
-      # Ensure matching start point for test
-      ts_test <- test$Value
-      
-      # ARIMA
-      fit_arima <- forecast(auto.arima(ts_train), h = k)
-      arima_metrics <- accuracy(fit_arima, ts_test)
-      
-      # ETS
-      fit_ets <- forecast(ets(ts_train), h = k)
-      ets_metrics <- accuracy(fit_ets, ts_test)
-      
-      # Prophet
-      df_prophet <- train %>%
-        rename(ds = Date, y = Value)
-      model_prophet <- prophet(df_prophet, verbose = FALSE)
-      future <- make_future_dataframe(model_prophet, periods = k, freq = switch(input$time_view,
-                                                                                "Day" = "day",
-                                                                                "Week" = "week",
-                                                                                "Month" = "month"))
-      forecast_prophet <- predict(model_prophet, future)
-      yhat <- tail(forecast_prophet$yhat, k)
-      prophet_metrics <- c(
-        MAE = mean(abs(ts_test - yhat)),
-        RMSE = sqrt(mean((ts_test - yhat)^2)),
-        MAPE = mean(abs((ts_test - yhat) / ts_test)) * 100
-      )
-      
-      # Summary Table
-      eval_table <- tibble::tibble(
-        Model = c("ARIMA", "ETS", "Prophet"),
-        MAE = round(c(arima_metrics["Test set", "MAE"], ets_metrics["Test set", "MAE"], prophet_metrics["MAE"]), 2),
-        RMSE = round(c(arima_metrics["Test set", "RMSE"], ets_metrics["Test set", "RMSE"], prophet_metrics["RMSE"]), 2),
-        MAPE = round(c(arima_metrics["Test set", "MAPE"], ets_metrics["Test set", "MAPE"], prophet_metrics["MAPE"]), 2)
-      )
-      
-      # Recommend model with lowest RMSE
-      best_model <- eval_table$Model[which.min(eval_table$RMSE)]
-      eval_table <- add_column(eval_table, Recommendation = ifelse(eval_table$Model == best_model, "✅ Recommended", ""))
-      
-      eval_table
-    })
-    
-      
-        
 
-  
+    
+    
     
   })
 

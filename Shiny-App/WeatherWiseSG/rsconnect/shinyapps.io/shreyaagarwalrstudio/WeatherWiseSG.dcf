@@ -5,8 +5,9 @@ account: shreyaagarwalrstudio
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 14382709
-bundleId: 10051015
+bundleId: 10056072
 url: https://shreyaagarwalrstudio.shinyapps.io/WeatherWiseSG/
 version: 1
 asMultiple: FALSE
 asStatic: FALSE
+ignoredFiles: forecasting_server_prev.R|forecasting_ui_prev.R
