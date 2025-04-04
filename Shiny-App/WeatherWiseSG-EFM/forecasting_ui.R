@@ -128,6 +128,7 @@ forecasting_ui <- function(id) {
                        width = 12,
                        height = "250px",  # approx. 20%
                        status = "info",
+                       actionButton(ns("evaluate_forecast"), "Evaluate Forecast Models"),
                        tableOutput(ns("forecast_eval_table"))
                      )
               )
