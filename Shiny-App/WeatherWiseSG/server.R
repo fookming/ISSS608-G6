@@ -1,10 +1,10 @@
 # -----------------------------------------------------------------
 # Load Packages
 # -----------------------------------------------------------------
-library(methods)     # Required for S4 methods (like coerce)
-library(sp)          # Required for STFDF, Raster* classes
-library(raster)      # Used internally by gstat; load before gstat
-library(gstat)       # Load after sp and raster to avoid coerce error
+library(methods) # Required for S4 methods (like coerce)
+library(sp) # Required for STFDF, Raster* classes
+library(raster) # Used internally by gstat; load before gstat
+library(gstat) # Load after sp and raster to avoid coerce error
 
 library(lubridate)
 library(ggthemes)
@@ -902,10 +902,10 @@ function(input, output, session) {
 
   # ---- Dynamic Station List ----
   observe({
-    req(input$cda_station_time_type)  # Ensure the input is available
-    
+    req(input$cda_station_time_type) # Ensure the input is available
+
     station_choices <- sort(unique(climate_eda$Station))
-    
+
     updateSelectizeInput(session, "cda_station_list",
       choices = station_choices,
       selected = station_choices[1:min(2, length(station_choices))],
@@ -952,7 +952,7 @@ function(input, output, session) {
       session$sendCustomMessage("toggleLoading", FALSE)
       return()
     }
-    
+
     # Limit station count for "Year" selection
     if (input$cda_station_time_type == "Year" && length(input$cda_station_list) > 8) {
       showNotification("You can only select max 8 stations when 'Year' is selected.", type = "error")

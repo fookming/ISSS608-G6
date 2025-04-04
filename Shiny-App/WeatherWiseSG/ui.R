@@ -1,10 +1,10 @@
 # ---------------------------------------------------------
 # Load Packages
 # ---------------------------------------------------------
-library(methods)     # Required for S4 methods (like coerce)
-library(sp)          # Required for STFDF, Raster* classes
-library(raster)      # Used internally by gstat; load before gstat
-library(gstat)       # Load after sp and raster to avoid coerce error
+library(methods) # Required for S4 methods (like coerce)
+library(sp) # Required for STFDF, Raster* classes
+library(raster) # Used internally by gstat; load before gstat
+library(gstat) # Load after sp and raster to avoid coerce error
 
 # Core Shiny App Packages
 library(shiny)
@@ -61,7 +61,7 @@ dashboardPage(
   # Sidebar Menu (Navigation)
   sidebar = dashboardSidebar(
     skin = "light",
-    status = "primary",
+    status = "info",
     title = NULL,
     bs4SidebarMenu(
       bs4SidebarMenuItem("Landing Page", tabName = "landing", icon = icon("home")),
@@ -158,23 +158,19 @@ dashboardPage(
     bs4TabItems(
       bs4TabItem(
         tabName = "landing",
-        
         fluidRow(
           # Left Side
           column(
             width = 8,
-            
             bs4Card(
               title = "Welcome !",
               width = 12,
               status = "primary",
               solidHeader = TRUE,
               collapsible = FALSE,
-              p("Singapore’s tropical climate presents complex challenges for urban planning, infrastructure, and risk management due to high temperatures, intense humidity, and frequent rainfall."),
-              p("This dashboard offers a comprehensive, standalone weather analytics solution tailored to Singapore’s unique climate. It explores historical weather trends, integrates advanced statistical methods, spatial visualisation, and predictive modelling to empower users with actionable insights for strategic and climate-resilient planning across industries."),
-              p(HTML("The historical data was obtained from the <a href = 'https://www.weather.gov.sg/climate-historical-daily/'>Meteorological Service Singapore</a>."))
+              p("Singapore’s tropical climate presents complex challenges for urban planning, infrastructure, and risk management due to high temperatures, intense humidity, and frequent rainfall. This dashboard offers a comprehensive, standalone weather analytics solution tailored to Singapore’s unique climate. It explores historical weather trends, integrates advanced statistical methods, spatial visualisation, and predictive modelling to empower users with actionable insights for strategic and climate-resilient planning across industries."),
+              p(HTML("The historical data was obtained from the <a href = 'https://www.weather.gov.sg/climate-historical-daily/'>Meteorological Service Singapore</a> site."))
             ),
-            
             bs4Card(
               title = "Dashboard Modules Overview",
               width = 12,
@@ -183,70 +179,70 @@ dashboardPage(
               collapsible = FALSE,
               icon = icon("layer-group"),
               p(
-                strong("1. Exploratory Data Analysis:"), 
-                "Explore Singapore’s weather patterns through interactive charts and visual summaries."
+                strong("1. Exploratory Data Analysis:"),
+                "Explore Singapore’s weather patterns and analyze temperature, rainfall, and wind patterns across time and stations through interactive charts and visual summaries."
               ),
               p(
-                strong("2. Confirmatory Data Analysis:"), 
-                "Statistical testing to validate patterns observed in the EDA section. Users can test for significant differences between groups and explore normality and distributional assumptions."
+                strong("2. Confirmatory Data Analysis:"),
+                "Statistical testing to validate patterns observed in the EDA section. Users can test for significant differences between groups (e.g., stations, time periods) and explore normality and distributional assumptions."
               ),
               p(
-                strong("3. Time Series Forecasting:"), 
+                strong("3. Time Series Forecasting:"),
                 "Identify long-term and seasonal patterns using rolling averages and seasonal plots. Includes decomposition techniques to separate trend, seasonality, and residuals. Users can statistically analyze weather fluctuations and forecast future trends using models like ARIMA, Prophet, or Exponential Smoothing to assess future climate risks and variations."
               ),
               p(
-                strong("4. Geo-Spatial Analysis:"), 
-                " Visualize extreme weather events and perform spatial interpolation using IDW and Kriging."
+                strong("4. Geo-Spatial Analysis:"),
+                "Provides interactive map to explore extreme events by Station and Map Visualizations of interpolated weather measurements for estimation of weather conditions at locations where direct measurements are unavailable. Plot and compare interpolated map using different methods: Inverse Distance Weighted and Ordinary Kriging. "
               )
             )
           ),
-          
+
           # Right Side
           column(
             width = 4,
-            
+
             # First row: Two summary boxes side by side
             fluidRow(
               bs4ValueBox(
                 value = HTML("<span style='font-size: 25px; font-weight: bold;'>15</span>"),
                 subtitle = "Weather Stations",
                 icon = icon("map-marker-alt", class = "fa-1x"),
-                color = "success",
+                color = "olive",
                 width = 6
               ),
               bs4ValueBox(
                 value = HTML("<span style='font-size: 23px; font-weight: bold;'>2018–2024</span>"),
                 subtitle = "Data Coverage",
                 icon = icon("calendar-alt", class = "fa-1x"),
-                color = "success",
+                color = "olive",
                 width = 6
               )
             ),
-            
+
             # Second row: One full-width summary box
             fluidRow(
               bs4ValueBox(
                 value = HTML("<span style='font-size: 23px; font-weight: bold;'>5</span>"),
                 subtitle = HTML("Weather Parameters: <span style='font-size: 14px;'>Rainfall Total, Temperature (Mean/Max/Min), Mean Wind Speed</span>"),
                 icon = icon("database", class = "fa-1x"),
-                color = "success",
+                color = "olive",
                 width = 12
               )
             ),
-            
+
             # Third row: First image full-width
             fluidRow(
               column(
                 width = 12,
                 bs4Card(
-                  title = "Trend",
+                  title = "Time Series Analysis",
                   width = 12,
                   solidHeader = TRUE,
                   img(src = "trend_plot.png", width = "100%")
                 )
               )
             ),
-            
+
             # Fourth row: Second image full-width
             fluidRow(
               column(
@@ -261,8 +257,7 @@ dashboardPage(
             )
           )
         )
-      )
-      ,
+      ),
       bs4TabItem(
         tabName = "eda_overview",
         fluidRow(
