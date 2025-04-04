@@ -64,7 +64,7 @@ dashboardPage(
     status = "info",
     title = NULL,
     bs4SidebarMenu(
-      bs4SidebarMenuItem("Landing Page", tabName = "landing", icon = icon("home")),
+      bs4SidebarMenuItem("Home", tabName = "landing", icon = icon("home")),
       bs4SidebarMenuItem("Exploratory Data Analysis",
         icon = icon("chart-area"),
         bs4SidebarMenuSubItem("Overview", tabName = "eda_overview"),
