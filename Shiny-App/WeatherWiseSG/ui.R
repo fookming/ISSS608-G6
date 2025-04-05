@@ -782,7 +782,7 @@ dashboardPage(
                   "Minimum Temperature" = "Minimum Temperature (Celsius)",
                   "Mean Wind Speed" = "Mean Wind Speed (km/h)"
                 ),
-                selected = "Mean Temperature (Celsius)"
+                selected = "Daily Rainfall Total (mm)"
               ),
               selectInput(
                 inputId = "geo_inter_time_interval",
