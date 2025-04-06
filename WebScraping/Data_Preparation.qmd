@@ -121,7 +121,9 @@ climate <- climate |>
 
 The final `climate` dataframe consists of **10 columns**, including the **5 key weather parameters** selected for further analysis.
 
-### Count months per station with missing values for Daily Rainfall
+## Missing Rainfall records
+
+Next we check for null records from the key parameter `Daily Rainfall Total (mm)`.
 
 ```{r}
 # Count missing values for each Station, Year, and Month 
@@ -145,9 +147,11 @@ missing_rain_summary <- missing_rain_counts %>%
   ungroup()
 ```
 
-Observations - Rainfall has 7 stations with \>15 days of missing data for months over the years. Also observed that some stations eg - Semakau Island has a full year of missing data record. 2015-2017 specially has a lot of missing data across stations.
+The output reveals 7 stations with ≥15 days of missing Daily Rainfall Total (mm) in more than one month over the years. Semakau Island station has a full year of missing data in 2019, while 2015–2017 period shows a high prevalence of missing data across stations.
 
-### Count months per station with missing values for Mean Temperature
+## Missing Temperature Records
+
+We carry out the same check for `Mean Temperature (Celsius)`.
 
 ```{r}
 # Count missing values for each Station, Year, and Month 
@@ -171,11 +175,11 @@ missing_temp_summary <- missing_temp_counts %>%
   ungroup()
 ```
 
-Observations - Those same 7 stations for daily rainfall are also part of the total 15 stations for Mean Temp with missing data where \>15 days are missing per month. Also observed that some stations have full years of missing data record. And 2015-2017 specially has a lot of missing data across stations.
+The same 7 stations with significant missing `Daily Rainfall Total (mm)` are also among the 15 stations with missing `Mean Temperature (Celsius)` data, where more than 15 days are missing for certain months. Some stations have full years of missing data, with 2015–2017 particularly shows a high prevalence of missing data across stations.
 
-### Filtering out stations with \>=3 months of missing records from climate dataset
+## Exclude stations with many missing records
 
-As observed above, we are only going to keep data from 2018 onwards considering the missing data for 2015-2017 time period. Then for each station we take the total count of missing months across the years and flag the stations with \>=3 total count so that those flagged stations can be filtered out from our main climate dataset.
+Given the extensive missing data from 2015–2017, we will retain data from 2018 onwards. For each station, we will count the total number of months with more than 15 days missing data across the years and flag stations with more than 3 missing months. Those stations will be excluded from the main `climate` dataset.
 
 ```{r}
 filter_invalid_stations <- function(summary_df, from_year = 2018) {
@@ -206,7 +210,7 @@ invalid_temp_stations <- filter_invalid_stations(missing_temp_summary)
 stations_to_exclude <- union(invalid_rain_stations, invalid_temp_stations) 
 ```
 
-There are total 5 stations which will be excluded. Applying this filter on the climate dataset.
+The above 5 stations will be excluded. The below code chunk applies this filter on the `climate` dataframe.
 
 ```{r}
 # Now filter the full dataset to only include stations from 2018-2024
@@ -216,7 +220,7 @@ climate_final <- climate |>
 summary(climate_final)
 ```
 
-climate_final is filtered dataset obtained. Below is the list of the final 15 AWS stations that we will be focusing our analysis on.
+`climate_final` is the filtered dataset obtained. Below is the list of the final 15 AWS stations that we will be focusing our analysis on.
 
 ```{r}
 climate_final %>% 
@@ -227,16 +231,17 @@ climate_final %>%
 
 ## Replacing Missing Values using SMA 5 days
 
-We check below to see total missing values in each column for climate_final dataset obtained above,
+The below code chunk counts the number of missing values in each column of `climate_final`.
 
 ```{r}
 climate_final %>% 
   summarise(across(where(is.numeric), ~sum(is.na(.)), .names = "missing_{.col}"))
 ```
 
-We can see that the 5 weather parameters have some missing values. We will use 5-day backward moving average first to impute values. After that we still have some NAs for cases where rolling back can't be applied (if NAs are in the beginning of the time series). In that case, we apply 5-day forward moving average as a fallback.
+The output reveals multiple missing values across the five weather parameters. To address this, we will first apply a 5-day backward moving average for imputation. However, for cases where this method cannot be applied (e.g., missing values at the beginning of the time series), we will use a 5-day forward moving average as a fallback.
 
 ```{r}
+#| eval: false
 # === Load dataset ===
 climate <- climate_final
 original <- climate
@@ -272,47 +277,25 @@ for (col in impute_cols) {
 
 # === Save updated CSV ===
 write_csv(climate, "data/climate_historical_daily_records/climate_final_2018_2024.csv")
-
-# === Prepare Excel with bold + red styling for updated NA values ===
-wb <- createWorkbook()
-addWorksheet(wb, "Updated_NAs")
-
-# Create red bold style
-style_red_bold <- createStyle(textDecoration = "bold", fontColour = "#FF0000")
-
-# Write correct header row in row 1
-writeData(wb, "Updated_NAs", as.data.frame(t(colnames(climate))), startRow = 1, colNames = FALSE)
-
-# Write entire dataset starting from row 2
-writeData(wb, "Updated_NAs", climate, startRow = 2, colNames = FALSE)
-
-# Apply red + bold style for every updated NA field
-for (col_name in impute_cols) {
-  col_idx <- which(names(climate) == col_name)
-  updated_rows <- which(is.na(original[[col_name]]) & !is.na(climate[[col_name]]))
-
-  if (length(updated_rows) > 0) {
-    for (row in updated_rows) {
-      addStyle(wb,
-               sheet = "Updated_NAs",
-               style = style_red_bold,
-               rows = row + 1,   # Offset +1 because header is row 1
-               cols = col_idx,
-               gridExpand = FALSE,
-               stack = TRUE)
-    }
-  }
-}
-
-# Save Excel
-saveWorkbook(wb, "data/climate_historical_daily_records/NAs_fields_updated_5-Day.xlsx", overwrite = TRUE)
 ```
 
-The final prepared dataset for our analysis is saved as *climate_final_2018_2024.csv* with no missing data. The excel workbook is created for the same csv file to observe the NA values replaced - highlighted in red.
+The final prepared dataset for our analysis is saved as `climate_final_2018_2024.csv` with no missing data.
 
-Below is the check for missing data for our final csv and it shows no missing data anymore.
+The below code chunk reads the final dataset from `climate_final_2018_2024.csv`for further analysis.
+
+```{r}
+climate = read_csv('data/climate_historical_daily_records/climate_final_2018_2024.csv')
+```
+
+We verify the final `climate` dataframe for missing data using below code chunk. The output confirms that all missing values have been successfully imputed.
 
 ```{r}
 climate %>% 
   summarise(across(where(is.numeric), ~sum(is.na(.)), .names = "missing_{.col}"))
+```
+
+The below code chunk provides a summary of the imputed `climate` dataframe.
+
+```{r}
+summary(climate)
 ```

@@ -2,11 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.40">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Nguyen Bao Thu Phuong &amp; Shreya Agarwal">
+<meta name="author" content="Ee Fook Ming, Nguyen Bao Thu Phuong &amp; Shreya Agarwal">
 <meta name="dcterms.date" content="2025-03-18">
 
 <title>Data Preparation – WeatherWise SG</title>
@@ -71,10 +71,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-530bf8e59df25186f8bffdc63bad3503.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -128,20 +128,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link" href="../Proposal/Proposal.html"> 
 <span class="menu-text">Proposal</span></a>
   </li>  
-  <li class="nav-item">
-    <span class="nav-link">
-<span class="menu-text">Discovery</span>
-    </span>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-discovery" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Discovery</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-discovery">    
+        <li>
+    <a class="dropdown-item" href="../WebScraping/Data_Scraping.html">
+ <span class="dropdown-text">Data Scraping</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../WebScraping/Data_Preparation.html">
+ <span class="dropdown-text">Data Preparation</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
     <span class="nav-link">
 <span class="menu-text">Shiny App</span>
     </span>
   </li>  
   <li class="nav-item">
-    <span class="nav-link">
-<span class="menu-text">Poster</span>
-    </span>
+    <a class="nav-link" href="../PDF/WeatherWise Poster.pdf"> 
+<span class="menu-text">Poster</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../about.html"> 
@@ -168,22 +177,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#the-data" id="toc-the-data" class="nav-link" data-scroll-target="#the-data"><span class="header-section-number">1.1</span> The Data</a></li>
   </ul></li>
   <li><a href="#install-r-packages" id="toc-install-r-packages" class="nav-link" data-scroll-target="#install-r-packages"><span class="header-section-number">2</span> Install R packages</a></li>
-  <li><a href="#data-wrangling" id="toc-data-wrangling" class="nav-link" data-scroll-target="#data-wrangling"><span class="header-section-number">3</span> Data Wrangling</a>
+  <li><a href="#data-import-and-preparation" id="toc-data-import-and-preparation" class="nav-link" data-scroll-target="#data-import-and-preparation"><span class="header-section-number">3</span> Data Import and Preparation</a>
   <ul class="collapse">
-  <li><a href="#data-import-and-preparation" id="toc-data-import-and-preparation" class="nav-link" data-scroll-target="#data-import-and-preparation"><span class="header-section-number">3.1</span> Data Import and Preparation</a>
-  <ul class="collapse">
-  <li><a href="#daily-weather-records" id="toc-daily-weather-records" class="nav-link" data-scroll-target="#daily-weather-records"><span class="header-section-number">3.1.1</span> Daily Weather Records</a></li>
-  <li><a href="#weather-station-records" id="toc-weather-station-records" class="nav-link" data-scroll-target="#weather-station-records"><span class="header-section-number">3.1.2</span> Weather Station Records</a></li>
+  <li><a href="#daily-weather-records" id="toc-daily-weather-records" class="nav-link" data-scroll-target="#daily-weather-records"><span class="header-section-number">3.1</span> Daily Weather Records</a></li>
+  <li><a href="#weather-station-records" id="toc-weather-station-records" class="nav-link" data-scroll-target="#weather-station-records"><span class="header-section-number">3.2</span> Weather Station Records</a></li>
   </ul></li>
-  <li><a href="#data-wrangling-1" id="toc-data-wrangling-1" class="nav-link" data-scroll-target="#data-wrangling-1"><span class="header-section-number">3.2</span> Data Wrangling</a>
+  <li><a href="#data-wrangling" id="toc-data-wrangling" class="nav-link" data-scroll-target="#data-wrangling"><span class="header-section-number">4</span> Data Wrangling</a>
   <ul class="collapse">
-  <li><a href="#join-both-tables" id="toc-join-both-tables" class="nav-link" data-scroll-target="#join-both-tables"><span class="header-section-number">3.2.1</span> Join both tables</a></li>
-  <li><a href="#filter-climate-dataset-for-only-key-parameters" id="toc-filter-climate-dataset-for-only-key-parameters" class="nav-link" data-scroll-target="#filter-climate-dataset-for-only-key-parameters"><span class="header-section-number">3.2.2</span> Filter climate dataset for only key parameters</a></li>
-  <li><a href="#count-months-per-station-with-missing-values-for-daily-rainfall" id="toc-count-months-per-station-with-missing-values-for-daily-rainfall" class="nav-link" data-scroll-target="#count-months-per-station-with-missing-values-for-daily-rainfall"><span class="header-section-number">3.2.3</span> Count months per station with missing values for Daily Rainfall</a></li>
-  <li><a href="#count-months-per-station-with-missing-values-for-mean-temperature" id="toc-count-months-per-station-with-missing-values-for-mean-temperature" class="nav-link" data-scroll-target="#count-months-per-station-with-missing-values-for-mean-temperature"><span class="header-section-number">3.2.4</span> Count months per station with missing values for Mean Temperature</a></li>
-  <li><a href="#filtering-out-stations-with-3-months-of-missing-records-from-climate-dataset" id="toc-filtering-out-stations-with-3-months-of-missing-records-from-climate-dataset" class="nav-link" data-scroll-target="#filtering-out-stations-with-3-months-of-missing-records-from-climate-dataset"><span class="header-section-number">3.2.5</span> Filtering out stations with &gt;=3 months of missing records from climate dataset</a></li>
-  </ul></li>
-  <li><a href="#replacing-missing-values" id="toc-replacing-missing-values" class="nav-link" data-scroll-target="#replacing-missing-values"><span class="header-section-number">3.3</span> Replacing Missing Values</a></li>
+  <li><a href="#join-station-with-climate-dataframe" id="toc-join-station-with-climate-dataframe" class="nav-link" data-scroll-target="#join-station-with-climate-dataframe"><span class="header-section-number">4.1</span> Join Station with Climate dataframe</a></li>
+  <li><a href="#missing-rainfall-records" id="toc-missing-rainfall-records" class="nav-link" data-scroll-target="#missing-rainfall-records"><span class="header-section-number">4.2</span> Missing Rainfall records</a></li>
+  <li><a href="#missing-temperature-records" id="toc-missing-temperature-records" class="nav-link" data-scroll-target="#missing-temperature-records"><span class="header-section-number">4.3</span> Missing Temperature Records</a></li>
+  <li><a href="#exclude-stations-with-many-missing-records" id="toc-exclude-stations-with-many-missing-records" class="nav-link" data-scroll-target="#exclude-stations-with-many-missing-records"><span class="header-section-number">4.4</span> Exclude stations with many missing records</a></li>
+  <li><a href="#replacing-missing-values-using-sma-5-days" id="toc-replacing-missing-values-using-sma-5-days" class="nav-link" data-scroll-target="#replacing-missing-values-using-sma-5-days"><span class="header-section-number">4.5</span> Replacing Missing Values using SMA 5 days</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -203,7 +208,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Nguyen Bao Thu Phuong &amp; Shreya Agarwal </p>
+             <p>Ee Fook Ming, Nguyen Bao Thu Phuong &amp; Shreya Agarwal </p>
           </div>
   </div>
     
@@ -217,7 +222,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">March 23, 2025</p>
+      <p class="date-modified">April 6, 2025</p>
     </div>
   </div>
     
@@ -230,72 +235,139 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="overview" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Overview</h1>
-<p>Data Preparation for final use</p>
+<p>This section outlines the data preparation process, including the exclusion of stations with extensive missing data and the imputation of missing values for selected stations, ensuring data quality for subsequent visual analytics in our project.</p>
 <section id="the-data" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="the-data"><span class="header-section-number">1.1</span> The Data</h2>
 <ul>
-<li>Scraped weather data and weather stations records</li>
+<li>Scraped weather data from Meteorological Service Singapore stored in <code>Climate_Data_2015_2024.csv</code> .</li>
+<li>Weather Station records from <a href="https://www.weather.gov.sg/wp-content/uploads/2024/08/Station_Records.pdf">weather.gov.sg</a>, stored in <code>Station_Records.csv</code> .</li>
 </ul>
 </section>
 </section>
 <section id="install-r-packages" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> Install R packages</h1>
+<p>The below code chunk uses <code>p_load()</code> to load and install the required packages into R environment.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, readr, openxlsx, zoo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="data-wrangling" class="level1" data-number="3">
-<h1 data-number="3"><span class="header-section-number">3</span> Data Wrangling</h1>
-<section id="data-import-and-preparation" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="data-import-and-preparation"><span class="header-section-number">3.1</span> Data Import and Preparation</h2>
-<section id="daily-weather-records" class="level3" data-number="3.1.1">
-<h3 data-number="3.1.1" class="anchored" data-anchor-id="daily-weather-records"><span class="header-section-number">3.1.1</span> Daily Weather Records</h3>
-<p>First we read in the daily weather records scraped from weather.gov.sg into tibble dataframe <code>climate_raw</code> using <code>read_csv()</code> .</p>
+<section id="data-import-and-preparation" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Data Import and Preparation</h1>
+<section id="daily-weather-records" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="daily-weather-records"><span class="header-section-number">3.1</span> Daily Weather Records</h2>
+<p>First we read in the daily weather records scraped from <a href="https://www.weather.gov.sg/climate-historical-daily/">weather.gov.sg</a> into tibble dataframe <code>climate_raw</code> using <code>read_csv()</code> .</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>climate_raw <span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">"data/climate_historical_daily_records/Climate_Data_2015_2024.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
-<section id="weather-station-records" class="level3" data-number="3.1.2">
-<h3 data-number="3.1.2" class="anchored" data-anchor-id="weather-station-records"><span class="header-section-number">3.1.2</span> Weather Station Records</h3>
-<p>We only want to consider Full AWS stations since it contains data for all different weather parameters. Many other stations are classified as “Close Stations”, “Daily Rainfall Stations” (only rainfall metrics) etc which we are not considering for our deeper analysis.</p>
+<p>Next we check if the scraped data contains any duplicate.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read station metadata and filter for Full AWS stations</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>station <span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">"data/Station_Records.csv"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Station_Type <span class="sc">==</span> <span class="st">"Full AWS Station"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>duplicate <span class="ot">&lt;-</span> climate_raw <span class="sc">%&gt;%</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by_all</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n</span>()<span class="sc">&gt;</span><span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>duplicate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 0 × 13
+# ℹ 13 variables: Station &lt;chr&gt;, Year &lt;dbl&gt;, Month &lt;dbl&gt;, Day &lt;dbl&gt;,
+#   Daily Rainfall Total (mm) &lt;dbl&gt;, Highest 30 min Rainfall (mm) &lt;dbl&gt;,
+#   Highest 60 min Rainfall (mm) &lt;dbl&gt;, Highest 120 min Rainfall (mm) &lt;dbl&gt;,
+#   Mean Temperature (Celsius) &lt;dbl&gt;, Maximum Temperature (Celsius) &lt;dbl&gt;,
+#   Minimum Temperature (Celsius) &lt;dbl&gt;, Mean Wind Speed (km/h) &lt;dbl&gt;,
+#   Max Wind Speed (km/h) &lt;dbl&gt;</code></pre>
 </div>
-<p>Check duplicate</p>
+</div>
+<p>The output shows there is no duplicates.</p>
+<p>The below code chunk uses <code>summary()</code> to have an overview of the scraped dataset.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>duplicate <span class="ot">&lt;-</span> station <span class="sc">%&gt;%</span>    </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by_all</span>() <span class="sc">%&gt;%</span>    </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n</span>()<span class="sc">&gt;</span><span class="dv">1</span>) <span class="sc">%&gt;%</span>    </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>duplicate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(climate_raw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Station               Year          Month             Day       
+ Length:192483      Min.   :2015   Min.   : 1.000   Min.   : 1.00  
+ Class :character   1st Qu.:2017   1st Qu.: 3.000   1st Qu.: 8.00  
+ Mode  :character   Median :2019   Median : 6.000   Median :16.00  
+                    Mean   :2019   Mean   : 6.485   Mean   :15.73  
+                    3rd Qu.:2022   3rd Qu.: 9.000   3rd Qu.:23.00  
+                    Max.   :2024   Max.   :12.000   Max.   :31.00  
+                                                                   
+ Daily Rainfall Total (mm) Highest 30 min Rainfall (mm)
+ Min.   :  0.000           Min.   : 0.000              
+ 1st Qu.:  0.000           1st Qu.: 0.000              
+ Median :  0.200           Median : 0.200              
+ Mean   :  6.672           Mean   : 3.968              
+ 3rd Qu.:  6.600           3rd Qu.: 4.200              
+ Max.   :247.200           Max.   :71.800              
+ NA's   :4921              NA's   :12754               
+ Highest 60 min Rainfall (mm) Highest 120 min Rainfall (mm)
+ Min.   :  0.000              Min.   :  0.000              
+ 1st Qu.:  0.000              1st Qu.:  0.000              
+ Median :  0.200              Median :  0.200              
+ Mean   :  4.939              Mean   :  5.639              
+ 3rd Qu.:  4.800              3rd Qu.:  5.600              
+ Max.   :103.100              Max.   :148.600              
+ NA's   :12811                NA's   :12808                
+ Mean Temperature (Celsius) Maximum Temperature (Celsius)
+ Min.   :22.20              Min.   :22.80                
+ 1st Qu.:27.30              1st Qu.:30.90                
+ Median :28.10              Median :32.00                
+ Mean   :28.05              Mean   :31.85                
+ 3rd Qu.:28.90              3rd Qu.:33.00                
+ Max.   :31.70              Max.   :38.00                
+ NA's   :128350             NA's   :124311               
+ Minimum Temperature (Celsius) Mean Wind Speed (km/h) Max Wind Speed (km/h)
+ Min.   : 0.00                 Min.   : 0.40          Min.   :  3.70       
+ 1st Qu.:24.30                 1st Qu.: 5.70          1st Qu.: 26.60       
+ Median :25.30                 Median : 7.60          Median : 31.50       
+ Mean   :25.39                 Mean   : 8.48          Mean   : 32.92       
+ 3rd Qu.:26.40                 3rd Qu.:10.40          3rd Qu.: 37.40       
+ Max.   :34.70                 Max.   :66.60          Max.   :138.60       
+ NA's   :124342                NA's   :125214         NA's   :124380       </code></pre>
+</div>
+</div>
+<p>The output shows there are many null values, while the min max range of all weather measurements are in the normal range.</p>
+</section>
+<section id="weather-station-records" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="weather-station-records"><span class="header-section-number">3.2</span> Weather Station Records</h2>
+<p>Next we read in the stations details to retrieve station types and coordinates. For our Shiny application, we focus solely on <strong>Full AWS</strong> stations, as they provide comprehensive data across all weather parameters. Other station types, such as Closed Stations and Daily Rainfall Stations (which only record rainfall metrics), are excluded from further analysis.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read station metadata and filter for Full AWS stations</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>station <span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">"data/Station_Records.csv"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Station_Type <span class="sc">==</span> <span class="st">"Full AWS Station"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The below code chunk checks for duplicate.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>duplicate <span class="ot">&lt;-</span> station <span class="sc">%&gt;%</span>    </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by_all</span>() <span class="sc">%&gt;%</span>    </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n</span>()<span class="sc">&gt;</span><span class="dv">1</span>) <span class="sc">%&gt;%</span>    </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>duplicate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 0 × 5
 # ℹ 5 variables: Station &lt;chr&gt;, code &lt;chr&gt;, Lat &lt;dbl&gt;, Long &lt;dbl&gt;,
 #   Station_Type &lt;chr&gt;</code></pre>
 </div>
 </div>
+<p>The output shows there is no duplicate.</p>
 </section>
 </section>
-<section id="data-wrangling-1" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="data-wrangling-1"><span class="header-section-number">3.2</span> Data Wrangling</h2>
-<section id="join-both-tables" class="level3" data-number="3.2.1">
-<h3 data-number="3.2.1" class="anchored" data-anchor-id="join-both-tables"><span class="header-section-number">3.2.1</span> Join both tables</h3>
-<p>Filter daily weather data for active AWS stations only and join the 2 datasets.</p>
+<section id="data-wrangling" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Data Wrangling</h1>
+<section id="join-station-with-climate-dataframe" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="join-station-with-climate-dataframe"><span class="header-section-number">4.1</span> Join Station with Climate dataframe</h2>
+<p>First we join <code>station</code> with <code>climate_raw</code> dataframe using <code>inner_join()</code> to include only records from active Full AWS Station.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Join to retain only Full AWS station records</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>climate <span class="ot">=</span> <span class="fu">inner_join</span>(station,climate_raw, <span class="at">by =</span> <span class="st">"Station"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Join to retain only Full AWS station records</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>climate <span class="ot">=</span> <span class="fu">inner_join</span>(station,climate_raw, <span class="at">by =</span> <span class="st">"Station"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Check for duplicates</p>
+<p>The below code chunk checks for duplicates in the joined dataframe.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>duplicate <span class="ot">&lt;-</span> climate <span class="sc">%&gt;%</span>    </span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by_all</span>() <span class="sc">%&gt;%</span>    </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n</span>()<span class="sc">&gt;</span><span class="dv">1</span>) <span class="sc">%&gt;%</span>    </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()    </span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>duplicate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>duplicate <span class="ot">&lt;-</span> climate <span class="sc">%&gt;%</span>    </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by_all</span>() <span class="sc">%&gt;%</span>    </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n</span>()<span class="sc">&gt;</span><span class="dv">1</span>) <span class="sc">%&gt;%</span>    </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()    </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>duplicate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 0 × 17
 # ℹ 17 variables: Station &lt;chr&gt;, code &lt;chr&gt;, Lat &lt;dbl&gt;, Long &lt;dbl&gt;,
@@ -308,105 +380,104 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>The output shows there is no duplicate in <code>climate</code> dataframe.</p>
+<p>Next we filter climate dataset for only relevant columns for our weather analysis.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select relevant columns</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>climate <span class="ot">&lt;-</span> climate <span class="sc">|&gt;</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Station, Station_Type, Year, Month, Day,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Daily Rainfall Total (mm)</span><span class="st">`</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Mean Temperature (Celsius)</span><span class="st">`</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Maximum Temperature (Celsius)</span><span class="st">`</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Minimum Temperature (Celsius)</span><span class="st">`</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Mean Wind Speed (km/h)</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The final <code>climate</code> dataframe consists of <strong>10 columns</strong>, including the <strong>5 key weather parameters</strong> selected for further analysis.</p>
 </section>
-<section id="filter-climate-dataset-for-only-key-parameters" class="level3" data-number="3.2.2">
-<h3 data-number="3.2.2" class="anchored" data-anchor-id="filter-climate-dataset-for-only-key-parameters"><span class="header-section-number">3.2.2</span> Filter climate dataset for only key parameters</h3>
-<p>Next we select only the relevant columns for our weather analysis</p>
+<section id="missing-rainfall-records" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="missing-rainfall-records"><span class="header-section-number">4.2</span> Missing Rainfall records</h2>
+<p>Next we check for null records from the key parameter&nbsp;<code>Daily Rainfall Total (mm)</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select relevant columns</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>climate <span class="ot">&lt;-</span> climate <span class="sc">|&gt;</span> </span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Station, Station_Type, Year, Month, Day,</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Daily Rainfall Total (mm)</span><span class="st">`</span>,</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Mean Temperature (Celsius)</span><span class="st">`</span>,</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Maximum Temperature (Celsius)</span><span class="st">`</span>,</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Minimum Temperature (Celsius)</span><span class="st">`</span>,</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Mean Wind Speed (km/h)</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count missing values for each Station, Year, and Month </span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>missing_rain_counts <span class="ot">&lt;-</span> climate <span class="sc">%&gt;%</span>   </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Station, Year, Month) <span class="sc">%&gt;%</span>   </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Missing Daily Rainfall Total</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(<span class="st">`</span><span class="at">Daily Rainfall Total (mm)</span><span class="st">`</span>))   ) <span class="sc">%&gt;%</span>  </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Exclude rows where all missing counts are zero</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">Missing Daily Rainfall Total</span><span class="st">`</span> <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Now we only have 10 columns and 5 weather parameters we want to further perform our analysis on.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count the number of months per station where missing days exceed 15 </span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>missing_rain_summary <span class="ot">&lt;-</span> missing_rain_counts <span class="sc">%&gt;%</span>   </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">Missing Daily Rainfall Total</span><span class="st">`</span> <span class="sc">&gt;=</span> <span class="dv">15</span>) <span class="sc">%&gt;%</span>   </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Station, Year) <span class="sc">%&gt;%</span>   </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Count_Months =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span>   </span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Year)<span class="sc">|&gt;</span>   </span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Year, <span class="at">values_from =</span> Count_Months) <span class="sc">|&gt;</span>   </span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The output reveals 7 stations with ≥15 days of missing Daily Rainfall Total (mm) in more than one month over the years. Semakau Island station has a full year of missing data in 2019, while 2015–2017 period shows a high prevalence of missing data across stations.</p>
 </section>
-<section id="count-months-per-station-with-missing-values-for-daily-rainfall" class="level3" data-number="3.2.3">
-<h3 data-number="3.2.3" class="anchored" data-anchor-id="count-months-per-station-with-missing-values-for-daily-rainfall"><span class="header-section-number">3.2.3</span> Count months per station with missing values for Daily Rainfall</h3>
+<section id="missing-temperature-records" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="missing-temperature-records"><span class="header-section-number">4.3</span> Missing Temperature Records</h2>
+<p>We carry out the same check for <code>Mean Temperature (Celsius)</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count missing values for each Station, Year, and Month </span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>missing_rain_counts <span class="ot">&lt;-</span> climate <span class="sc">%&gt;%</span>   </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Station, Year, Month) <span class="sc">%&gt;%</span>   </span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Missing Daily Rainfall Total</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(<span class="st">`</span><span class="at">Daily Rainfall Total (mm)</span><span class="st">`</span>))   ) <span class="sc">%&gt;%</span>  </span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Exclude rows where all missing counts are zero</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">Missing Daily Rainfall Total</span><span class="st">`</span> <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count missing values for each Station, Year, and Month </span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>missing_temp_counts <span class="ot">&lt;-</span> climate <span class="sc">%&gt;%</span>   </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Station, Year, Month) <span class="sc">%&gt;%</span>   </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(     </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Missing Mean Temperature</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(<span class="st">`</span><span class="at">Mean Temperature (Celsius)</span><span class="st">`</span>))) <span class="sc">%&gt;%</span>   </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Exclude rows where all missing counts are zero</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">Missing Mean Temperature</span><span class="st">`</span> <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count the number of months per station where missing days exceed 15 </span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>missing_rain_summary <span class="ot">&lt;-</span> missing_rain_counts <span class="sc">%&gt;%</span>   </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">Missing Daily Rainfall Total</span><span class="st">`</span> <span class="sc">&gt;=</span> <span class="dv">15</span>) <span class="sc">%&gt;%</span>   </span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Station, Year) <span class="sc">%&gt;%</span>   </span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Count_Months =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span>   </span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Year)<span class="sc">|&gt;</span>   </span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Year, <span class="at">values_from =</span> Count_Months) <span class="sc">|&gt;</span>   </span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count the number of months per station where missing days exceed 15 </span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>missing_temp_summary <span class="ot">&lt;-</span> missing_temp_counts <span class="sc">%&gt;%</span>    </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">Missing Mean Temperature</span><span class="st">`</span> <span class="sc">&gt;=</span> <span class="dv">15</span>) <span class="sc">%&gt;%</span>   </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Station, Year) <span class="sc">%&gt;%</span>   </span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Count_Months =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span>   </span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Year)<span class="sc">|&gt;</span>   </span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Year, <span class="at">values_from =</span> Count_Months) <span class="sc">|&gt;</span>   </span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Observations - Rainfall has 7 stations with &gt;15 days of missing data for months over the years. Also observed that some stations eg - Semakau Island has a full year of missing data record. 2015-2017 specially has a lot of missing data across stations.</p>
+<p>The same 7 stations with significant missing <code>Daily Rainfall Total (mm)</code> are also among the 15 stations with missing&nbsp;<code>Mean Temperature (Celsius)</code> data, where more than 15 days are missing for certain months. Some stations have full years of missing data, with 2015–2017 particularly shows a high prevalence of missing data across stations.</p>
 </section>
-<section id="count-months-per-station-with-missing-values-for-mean-temperature" class="level3" data-number="3.2.4">
-<h3 data-number="3.2.4" class="anchored" data-anchor-id="count-months-per-station-with-missing-values-for-mean-temperature"><span class="header-section-number">3.2.4</span> Count months per station with missing values for Mean Temperature</h3>
+<section id="exclude-stations-with-many-missing-records" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="exclude-stations-with-many-missing-records"><span class="header-section-number">4.4</span> Exclude stations with many missing records</h2>
+<p>Given the extensive missing data from 2015–2017, we will retain data from 2018 onwards. For each station, we will count the total number of months with more than 15 days missing data across the years and flag stations with more than 3 missing months. Those stations will be excluded from the main&nbsp;<code>climate</code> dataset.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count missing values for each Station, Year, and Month </span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>missing_temp_counts <span class="ot">&lt;-</span> climate <span class="sc">%&gt;%</span>   </span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Station, Year, Month) <span class="sc">%&gt;%</span>   </span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(     </span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Missing Mean Temperature</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(<span class="st">`</span><span class="at">Mean Temperature (Celsius)</span><span class="st">`</span>))) <span class="sc">%&gt;%</span>   </span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Exclude rows where all missing counts are zero</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">Missing Mean Temperature</span><span class="st">`</span> <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>filter_invalid_stations <span class="ot">&lt;-</span> <span class="cf">function</span>(summary_df, <span class="at">from_year =</span> <span class="dv">2018</span>) {</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get only year columns ≥ from_year</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  year_cols <span class="ot">&lt;-</span> summary_df <span class="sc">|&gt;</span> </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="fu">where</span>(is.numeric)) <span class="sc">|&gt;</span> </span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="fu">matches</span>(<span class="st">"^[0-9]{4}$"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="fu">as.character</span>(from_year)<span class="sc">:</span><span class="fu">last_col</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">colnames</span>()</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  summary_df <span class="sc">|&gt;</span> </span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rowwise</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">total_flagged_months =</span> <span class="fu">sum</span>(<span class="fu">c_across</span>(<span class="fu">all_of</span>(year_cols)), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(total_flagged_months <span class="sc">&gt;=</span> <span class="dv">3</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(Station)</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count the number of months per station where missing days exceed 15 </span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>missing_temp_summary <span class="ot">&lt;-</span> missing_temp_counts <span class="sc">%&gt;%</span>    </span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">Missing Mean Temperature</span><span class="st">`</span> <span class="sc">&gt;=</span> <span class="dv">15</span>) <span class="sc">%&gt;%</span>   </span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Station, Year) <span class="sc">%&gt;%</span>   </span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Count_Months =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span>   </span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Year)<span class="sc">|&gt;</span>   </span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Year, <span class="at">values_from =</span> Count_Months) <span class="sc">|&gt;</span>   </span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Observations - Those same 7 stations for daily rainfall are also part of the total 15 stations for Mean Temp with missing data where &gt;15 days are missing per month. Also observed that some stations have full years of missing data record. And 2015-2017 specially has a lot of missing data across stations.</p>
-</section>
-<section id="filtering-out-stations-with-3-months-of-missing-records-from-climate-dataset" class="level3" data-number="3.2.5">
-<h3 data-number="3.2.5" class="anchored" data-anchor-id="filtering-out-stations-with-3-months-of-missing-records-from-climate-dataset"><span class="header-section-number">3.2.5</span> Filtering out stations with &gt;=3 months of missing records from climate dataset</h3>
-<p>As observed above, we are only going to keep data from 2018 onwards considering the missing data for 2015-2017 time period. Then for each station we take the total count of missing months across the years and flag the stations with &gt;=3 total count so that those flagged stations can be filtered out from our main climate dataset.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>filter_invalid_stations <span class="ot">&lt;-</span> <span class="cf">function</span>(summary_df, <span class="at">from_year =</span> <span class="dv">2018</span>) {</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get only year columns ≥ from_year</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  year_cols <span class="ot">&lt;-</span> summary_df <span class="sc">|&gt;</span> </span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="fu">where</span>(is.numeric)) <span class="sc">|&gt;</span> </span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="fu">matches</span>(<span class="st">"^[0-9]{4}$"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="fu">as.character</span>(from_year)<span class="sc">:</span><span class="fu">last_col</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">colnames</span>()</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  summary_df <span class="sc">|&gt;</span> </span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rowwise</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">total_flagged_months =</span> <span class="fu">sum</span>(<span class="fu">c_across</span>(<span class="fu">all_of</span>(year_cols)), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(total_flagged_months <span class="sc">&gt;=</span> <span class="dv">3</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(Station)</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get invalid stations (stations to exclude)</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>invalid_rain_stations <span class="ot">&lt;-</span> <span class="fu">filter_invalid_stations</span>(missing_rain_summary)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>invalid_temp_stations <span class="ot">&lt;-</span> <span class="fu">filter_invalid_stations</span>(missing_temp_summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get invalid stations (stations to exclude)</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>invalid_rain_stations <span class="ot">&lt;-</span> <span class="fu">filter_invalid_stations</span>(missing_rain_summary)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>invalid_temp_stations <span class="ot">&lt;-</span> <span class="fu">filter_invalid_stations</span>(missing_temp_summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine all stations to exclude</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>stations_to_exclude <span class="ot">&lt;-</span> <span class="fu">union</span>(invalid_rain_stations, invalid_temp_stations) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>The above 5 stations will be excluded. The below code chunk applies this filter on the <code>climate</code> dataframe.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine all stations to exclude</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>stations_to_exclude <span class="ot">&lt;-</span> <span class="fu">union</span>(invalid_rain_stations, invalid_temp_stations) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>There are total 5 stations which will be excluded. Applying this filter on the climate dataset.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Now filter the full dataset to only include stations from 2018-2024</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>climate_final <span class="ot">&lt;-</span> climate <span class="sc">|&gt;</span> </span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(Station <span class="sc">%in%</span> stations_to_exclude), Year <span class="sc">&gt;=</span> <span class="dv">2018</span>, Year <span class="sc">&lt;=</span> <span class="dv">2024</span>)</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(climate_final)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Now filter the full dataset to only include stations from 2018-2024</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>climate_final <span class="ot">&lt;-</span> climate <span class="sc">|&gt;</span> </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(Station <span class="sc">%in%</span> stations_to_exclude), Year <span class="sc">&gt;=</span> <span class="dv">2018</span>, Year <span class="sc">&lt;=</span> <span class="dv">2024</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(climate_final)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   Station          Station_Type            Year          Month       
  Length:38186       Length:38186       Min.   :2018   Min.   : 1.000  
@@ -442,12 +513,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  NA's   :1701          </code></pre>
 </div>
 </div>
-<p>Below is the list of the final 15 AWS stations that we will be focusing our analysis on.</p>
+<p><code>climate_final</code> is the filtered dataset obtained. Below is the list of the final 15 AWS stations that we will be focusing our analysis on.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>climate_final <span class="sc">%&gt;%</span> </span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(Station) <span class="sc">%&gt;%</span> </span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Station) <span class="sc">%&gt;%</span> </span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Station_ID =</span> <span class="fu">row_number</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>climate_final <span class="sc">%&gt;%</span> </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(Station) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Station) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Station_ID =</span> <span class="fu">row_number</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 15 × 2
    Station               Station_ID
@@ -469,15 +540,116 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 15 Tuas South                    15</code></pre>
 </div>
 </div>
-<p>Saving the final dataset.</p>
+</section>
+<section id="replacing-missing-values-using-sma-5-days" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="replacing-missing-values-using-sma-5-days"><span class="header-section-number">4.5</span> Replacing Missing Values using SMA 5 days</h2>
+<p>The below code chunk counts the number of missing values in each column of <code>climate_final</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the full final cleaned dataset</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv(climate_final, "data/climate_historical_daily_records/climate_final_2018_2024.csv")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>climate_final <span class="sc">%&gt;%</span> </span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.)), <span class="at">.names =</span> <span class="st">"missing_{.col}"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 8
+  missing_Year missing_Month missing_Day `missing_Daily Rainfall Total (mm)`
+         &lt;int&gt;         &lt;int&gt;       &lt;int&gt;                               &lt;int&gt;
+1            0             0           0                                 260
+# ℹ 4 more variables: `missing_Mean Temperature (Celsius)` &lt;int&gt;,
+#   `missing_Maximum Temperature (Celsius)` &lt;int&gt;,
+#   `missing_Minimum Temperature (Celsius)` &lt;int&gt;,
+#   `missing_Mean Wind Speed (km/h)` &lt;int&gt;</code></pre>
 </div>
-</section>
-</section>
-<section id="replacing-missing-values" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="replacing-missing-values"><span class="header-section-number">3.3</span> Replacing Missing Values</h2>
+</div>
+<p>The output reveals multiple missing values across the five weather parameters. To address this, we will first apply a 5-day backward moving average for imputation. However, for cases where this method cannot be applied (e.g., missing values at the beginning of the time series), we will use a 5-day forward moving average as a fallback.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># === Load dataset ===</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>climate <span class="ot">&lt;-</span> climate_final</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>original <span class="ot">&lt;-</span> climate</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="co"># === Columns to impute ===</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>impute_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Daily Rainfall Total (mm)"</span>,</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"Mean Temperature (Celsius)"</span>,</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"Maximum Temperature (Celsius)"</span>,</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"Minimum Temperature (Celsius)"</span>,</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"Mean Wind Speed (km/h)"</span>)</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="co"># === Backward SMA-5 for first 4 rows ===</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="co"># === Backward SMA-5 (recursive fill for rows 4 to 1) ===</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">4</span><span class="sc">:</span><span class="dv">1</span>) {</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>  window <span class="ot">&lt;-</span> climate[(i <span class="sc">+</span> <span class="dv">1</span>)<span class="sc">:</span>(i <span class="sc">+</span> <span class="dv">5</span>), impute_cols]</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>  sma_values <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(window, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">1</span>)</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>  climate[i, impute_cols] <span class="ot">&lt;-</span> <span class="fu">as.list</span>(sma_values)</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a><span class="co"># === Forward SMA-5 for all other NAs ===</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (col <span class="cf">in</span> impute_cols) {</span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>  na_indices <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">is.na</span>(climate[[col]]))</span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (idx <span class="cf">in</span> na_indices) {</span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (idx <span class="sc">&gt;=</span> <span class="dv">5</span>) {</span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>      sma_val <span class="ot">&lt;-</span> <span class="fu">mean</span>(climate[[col]][(idx <span class="sc">-</span> <span class="dv">5</span>)<span class="sc">:</span>(idx <span class="sc">-</span> <span class="dv">1</span>)], <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">1</span>)</span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.nan</span>(sma_val)) {</span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>        climate[[col]][idx] <span class="ot">&lt;-</span> sma_val</span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a><span class="co"># === Save updated CSV ===</span></span>
+<span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(climate, <span class="st">"data/climate_historical_daily_records/climate_final_2018_2024.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The final prepared dataset for our analysis is saved as <code>climate_final_2018_2024.csv</code> with no missing data.</p>
+<p>The below code chunk reads the final dataset from&nbsp;<code>climate_final_2018_2024.csv</code>for further analysis.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>climate <span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">'data/climate_historical_daily_records/climate_final_2018_2024.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We verify the final <code>climate</code> dataframe for missing data using below code chunk. The output confirms that all missing values have been successfully imputed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>climate <span class="sc">%&gt;%</span> </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.)), <span class="at">.names =</span> <span class="st">"missing_{.col}"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 8
+  missing_Year missing_Month missing_Day `missing_Daily Rainfall Total (mm)`
+         &lt;int&gt;         &lt;int&gt;       &lt;int&gt;                               &lt;int&gt;
+1            0             0           0                                   0
+# ℹ 4 more variables: `missing_Mean Temperature (Celsius)` &lt;int&gt;,
+#   `missing_Maximum Temperature (Celsius)` &lt;int&gt;,
+#   `missing_Minimum Temperature (Celsius)` &lt;int&gt;,
+#   `missing_Mean Wind Speed (km/h)` &lt;int&gt;</code></pre>
+</div>
+</div>
+<p>The below code chunk provides a summary of the imputed <code>climate</code> dataframe.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(climate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Station          Station_Type            Year          Month       
+ Length:38186       Length:38186       Min.   :2018   Min.   : 1.000  
+ Class :character   Class :character   1st Qu.:2019   1st Qu.: 4.000  
+ Mode  :character   Mode  :character   Median :2021   Median : 7.000  
+                                       Mean   :2021   Mean   : 6.529  
+                                       3rd Qu.:2023   3rd Qu.:10.000  
+                                       Max.   :2024   Max.   :12.000  
+      Day        Daily Rainfall Total (mm) Mean Temperature (Celsius)
+ Min.   : 1.00   Min.   :  0.000           Min.   :22.20             
+ 1st Qu.: 8.00   1st Qu.:  0.000           1st Qu.:27.20             
+ Median :16.00   Median :  0.200           Median :28.10             
+ Mean   :15.73   Mean   :  6.888           Mean   :28.04             
+ 3rd Qu.:23.00   3rd Qu.:  6.600           3rd Qu.:28.90             
+ Max.   :31.00   Max.   :210.600           Max.   :31.70             
+ Maximum Temperature (Celsius) Minimum Temperature (Celsius)
+ Min.   :22.80                 Min.   :20.40                
+ 1st Qu.:30.80                 1st Qu.:24.40                
+ Median :32.00                 Median :25.40                
+ Mean   :31.79                 Mean   :25.46                
+ 3rd Qu.:33.00                 3rd Qu.:26.50                
+ Max.   :38.00                 Max.   :29.70                
+ Mean Wind Speed (km/h)
+ Min.   : 0.400        
+ 1st Qu.: 5.700        
+ Median : 7.600        
+ Mean   : 8.605        
+ 3rd Qu.:10.600        
+ Max.   :31.300        </code></pre>
+</div>
+</div>
 
 
 </section>
@@ -566,6 +738,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -676,6 +850,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
+      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {
