@@ -5,13 +5,20 @@ website:
   title: "WeatherWise SG"
   navbar:
     right:
-      - href: "Proposal/Proposal.html"
-        text: "Proposal"
+      - text: "Proposal"
+        href: "Proposal/Proposal.html"
       - text: "Discovery"
+        menu: 
+          - text: "Data Scraping"
+            href: "WebScraping/Data_Scraping.html"
+          - text: "Data Preparation"
+            href: "WebScraping/Data_Preparation.html"
       - text: "Shiny App"
       - text: "Poster"
-      - href: "about.html"
-        text: "Team"
+        href: "PDF/WeatherWise Poster.pdf"
+      - text: "Team"
+        href: "about.html"
+        
 format:
   html:
     theme:

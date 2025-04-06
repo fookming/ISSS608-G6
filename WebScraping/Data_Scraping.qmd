@@ -1,11 +1,31 @@
 ---
 title: "Web Scraping"
 author: "Ee Fook Ming"
+date: "15 March 2025" 
+date-modified: "last-modified"
+execute:
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+  warning: false
 ---
+
+# Climate Historical Daily Records
+
+As the climate historical daily records can only be retrieved from [Meteorological Service Singapore](https://www.weather.gov.sg/climate-historical-daily/) for a specific month of one station at a time, we have written the below code chunk to retrieve all climate daily records from 2015-2024 and compiled into one single csv file.
+
+# Set up R environment
+
+For the purpose of data scraping and compiling, the following packages are installed and loaded into R environment using `p_load()` of **pacman** package.
 
 ```{r}
 pacman::p_load(httr, readxl, dplyr, readr)
 ```
+
+# Download Data
+
+First we read in the S`tation_Records.xlsx` using below code chunk to retrieve station codes and their corresponding types. The station codes form part of a text string used to construct hyperlinks, which retrieve data directly from the weather website.
 
 ```{r}
 station_records <- read_excel("data/Station_Records.xlsx")
@@ -18,12 +38,20 @@ print(station_codes)
 ```
 
 ```{r}
-print(station_type)
+print(unique(station_type))
 ```
 
-The code chunk retrieves station codes and their corresponding types. These codes form part of a text string used to construct hyperlinks, which retrieve data directly from the weather website. There are three station types:
+The output shows there are three station types:
 
-Full AWS station: collects weather data on rainfall, temperature, and wind. Rainfall station: collects rainfall data only. Closed station: a station that is no longer operational. These station identifiers are useful for data filtering, analysis, and visualization based on specific station characteristics.
+-   Full AWS station: collects weather data on rainfall, temperature, and wind.
+
+-   Rainfall station: collects rainfall data only.
+
+-   Closed station: a station that is no longer operational.
+
+These station identifiers are useful for data filtering, analysis, and visualization based on specific station characteristics.
+
+The below code chunk systematically downloads daily climate data from Singapore’s weather service for all weather stations, covering years 2015 through 2024. It constructs URLs dynamically based on station codes, year, and month, retrieves CSV files, filters out incomplete or invalid entries, and then consolidates valid data into a single CSV file (`Climate_Data_2015_2024_v4.csv`). The primary intention is to compile a structured, comprehensive dataset of climate measurements for subsequent data processing, analysis or visualization tasks.
 
 ```{r}
 #| eval: false
@@ -107,5 +135,3 @@ print("Download process completed for all stations.")
 
 
 ```
-
-The code chunk systematically downloads daily climate data from Singapore’s weather service for multiple weather stations, covering years 2015 through 2024. It constructs URLs dynamically based on station codes, year, and month, retrieves CSV files, filters out incomplete or invalid entries, and then consolidates valid data into a single CSV file (Climate_Data_2015_2024_v4.csv). The primary intention is to compile a structured, comprehensive dataset of climate measurements for subsequent data processing, analysis or visualization tasks.

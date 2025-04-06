@@ -13,33 +13,55 @@ execute:
 
 # Overview
 
-Data Preparation for final use
+This section outlines the data preparation process, including the exclusion of stations with extensive missing data and the imputation of missing values for selected stations, ensuring data quality for subsequent visual analytics in our project.
 
 ## The Data
 
--   Scraped weather data and weather stations records
+-   Scraped weather data from Meteorological Service Singapore stored in `Climate_Data_2015_2024.csv` .
+-   Weather Station records from [weather.gov.sg](https://www.weather.gov.sg/wp-content/uploads/2024/08/Station_Records.pdf), stored in `Station_Records.csv` .
 
 # Install R packages
+
+The below code chunk uses `p_load()` to load and install the required packages into R environment.
 
 ```{r}
 pacman::p_load(tidyverse, readr, openxlsx, zoo)
 ```
 
-# Data Wrangling
+# Data Import and Preparation
 
-## Data Import and Preparation
+## Daily Weather Records
 
-### Daily Weather Records
-
-First we read in the daily weather records scraped from weather.gov.sg into tibble dataframe `climate_raw` using `read_csv()` .
+First we read in the daily weather records scraped from [weather.gov.sg](https://www.weather.gov.sg/climate-historical-daily/) into tibble dataframe `climate_raw` using `read_csv()` .
 
 ```{r}
 climate_raw = read_csv("data/climate_historical_daily_records/Climate_Data_2015_2024.csv")
 ```
 
-### Weather Station Records
+Next we check if the scraped data contains any duplicate.
 
-We only want to consider Full AWS stations since it contains data for all different weather parameters. Many other stations are classified as "Close Stations", "Daily Rainfall Stations" (only rainfall metrics) etc which we are not considering for our deeper analysis.
+```{r}
+duplicate <- climate_raw %>% 
+  group_by_all() %>% 
+  filter(n()>1) %>% 
+  ungroup()
+  
+duplicate
+```
+
+The output shows there is no duplicates.
+
+The below code chunk uses `summary()` to have an overview of the scraped dataset.
+
+```{r}
+summary(climate_raw)
+```
+
+The output shows there are many null values, while the min max range of all weather measurements are in the normal range.
+
+## Weather Station Records
+
+Next we read in the stations details to retrieve station types and coordinates. For our Shiny application, we focus solely on **Full AWS** stations, as they provide comprehensive data across all weather parameters. Other station types, such as Closed Stations and Daily Rainfall Stations (which only record rainfall metrics), are excluded from further analysis.
 
 ```{r}
 # Read station metadata and filter for Full AWS stations
@@ -47,7 +69,7 @@ station = read_csv("data/Station_Records.csv") |>
   filter(Station_Type == "Full AWS Station")
 ```
 
-Check duplicate
+The below code chunk checks for duplicate.
 
 ```{r}
 duplicate <- station %>%    
@@ -58,18 +80,20 @@ duplicate <- station %>%
 duplicate
 ```
 
-## Data Wrangling
+The output shows there is no duplicate.
 
-### Join both tables
+# Data Wrangling
 
-Filter daily weather data for active AWS stations only and join the 2 datasets.
+## Join Station with Climate dataframe
+
+First we join `station` with `climate_raw` dataframe using `inner_join()` to include only records from active Full AWS Station.
 
 ```{r}
 # Join to retain only Full AWS station records
 climate = inner_join(station,climate_raw, by = "Station")
 ```
 
-Check for duplicates
+The below code chunk checks for duplicates in the joined dataframe.
 
 ```{r}
 duplicate <- climate %>%    
@@ -82,9 +106,7 @@ duplicate
 
 The output shows there is no duplicate in `climate` dataframe.
 
-### Filter climate dataset for only key parameters
-
-Next we select only the relevant columns for our weather analysis
+Next we filter climate dataset for only relevant columns for our weather analysis.
 
 ```{r}
 # Select relevant columns
@@ -97,7 +119,7 @@ climate <- climate |>
          `Mean Wind Speed (km/h)`)
 ```
 
-Now we only have 10 columns and 5 weather parameters we want to further perform our analysis on.
+The final `climate` dataframe consists of **10 columns**, including the **5 key weather parameters** selected for further analysis.
 
 ### Count months per station with missing values for Daily Rainfall
 
