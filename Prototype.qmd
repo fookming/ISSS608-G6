@@ -1,0 +1,19 @@
+---
+title: "Prototyping for Shiny App Modules"
+date: "6 April 2025" 
+date-modified: "last-modified"
+execute:
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+  warning: false
+---
+
+The final **WeatherWise SG** Shiny Application consists of three core modules, each designed to provide users with distinct perspectives for analyzing and forecasting weather metrics. Prototyping responsibilities were distributed among team members, with individual links to each module prototype provided below:
+
+-   [**Time Series Data Analysis**](https://visualanalytics-ay2024-25-shreyaag.netlify.app/take-home_ex/take-home_ex03/take-home_ex03): Delivers interactive visualizations for both exploratory and confirmatory analysis, uncovering trends and comparisons in temperature, rainfall, and wind across different stations and time periods.
+
+-   [**Time Series Forecasting**](https://isss608eefm.netlify.app/take-home_ex/take-home_ex03/take-home_ex03): Offers time series decomposition into trend, seasonality, and residuals, along with forecasting tools that allow parameter customization. Forecasts are displayed alongside historical data for clear visual comparison.
+
+-   [**Geospatial Analysis**](https://visualanalytics-phuongnbt.netlify.app/take-home_ex/take-home_ex03/take-home_ex03): Features multiple maps to visualize extreme weather events by station and interpolated weather conditions at unmeasured locations using Inverse Distance Weighted (IDW) and Kriging methods.

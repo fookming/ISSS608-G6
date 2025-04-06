@@ -7,19 +7,21 @@ website:
     right:
       - text: "Proposal"
         href: "Proposal/Proposal.html"
-      - text: "Discovery"
+      - text: "Prototyping"
         menu: 
           - text: "Data Scraping"
             href: "WebScraping/Data_Scraping.html"
           - text: "Data Preparation"
             href: "WebScraping/Data_Preparation.html"
+          - text: "Prototyping for Shiny App modules"
+            href: "Prototype.html"
       - text: "Shiny App"
         menu: 
           - text: "User Guide"
             href: "PDF/WeatherWise SG User Guide.pdf"
           - text: "Shiny App"
             href: "https://shreyaagarwalrstudio.shinyapps.io/WeatherWiseSG/"
-      - text: "Project Poster"
+      - text: "Poster"
         href: "PDF/WeatherWise Poster.pdf"
       - text: "Team"
         href: "about.html"

@@ -29,26 +29,8 @@ Our project tackles this challenge by offering a platform with rich analytics, i
 
 The final **WeatherWise SG** Shiny Application consists of three core modules:
 
-1.  **Time Series Data Analysis**:
+1.  **Time Series Data Analysis**: Delivers interactive visualizations for both exploratory and confirmatory analysis, uncovering trends and comparisons in temperature, rainfall, and wind across different stations and time periods.
 
-    -   Exploratory and comparative data analysis to uncover trends in temperature, rainfall, and wind across regions and seasons.
+2.  **Time Series Forecasting**: Offers time series decomposition into trend, seasonality, and residuals, along with forecasting tools that allow parameter customization. Forecasts are displayed alongside historical data for clear visual comparison.
 
-    -   Visualization of seasonal/weather trends and inter-region comparisons.
-
-    -   Statistical tests for station-wise comparison across different time intervals and parameters.
-
-2.  **Time Series Forecasting**
-
-    -   Time Series Decomposition: visualize trend, seasonal and residuals from the dataset.
-
-    -   Forecasting:
-
-        -   Parameters configuration: Identify and fine tune different models' parameters
-
-        -   Benchmarking: Compare among different models using MAE, RMSE and MAPE.
-
-3.  **Geospatial Analysis**
-
-    -   Plot extreme weather events by station on Singapore map.
-
-    -   Interpolate weather conditions at unmeasured locations based on nearby data points using Inverse Distance Weighted (IDW) and Kriging methods.
+3.  **Geospatial Analysis**: Features multiple maps to visualize extreme weather events by station and interpolated weather conditions at unmeasured locations using Inverse Distance Weighted (IDW) and Kriging methods.
