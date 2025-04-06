@@ -17,11 +17,11 @@ These factors signify a need for a comprehensive platform offering statistical i
 
 # Objectives
 
-Our project tackles this challenge by offering a platform with rich analytics, interactive visualizations, and predictive tools tailored to Singapore’s context. This empowers businesses, researchers, and policymakers to make timely, strategic, and informed decisions, contributing to national climate resilience and smarter urban development.The project focuses on three main objectives:
+Our project tackles this challenge by offering a platform with rich analytics, interactive visualizations, and predictive tools tailored to Singapore’s context. The project focuses on three main objectives:
 
 1.  **Build a Comprehensive Weather Analytics Platform:** Integrate historical weather data from the Meteorological Service Singapore; covering temperature, rainfall, and wind, organized by station and time for easy access and analysis.
 
-2.  **Develop Advanced Visual Analytics:** Offer interactive time series and geospatial visualizations—such as trend lines, heat maps, forecasting, and spatial interpolation - using robust statistical techniques to uncover patterns, anomalies, and future conditions in Singapore’s weather.
+2.  **Develop Advanced Visual Analytics:** Offer interactive time series and geospatial visualizations using robust statistical techniques to uncover patterns, anomalies, and future conditions in Singapore’s weather.
 
 3.  **Ensure Independent and Flexible Use Across Sectors:** Design a user-friendly platform that supports diverse stakeholders - businesses, academics, and government agencies - with decision-making and strategic planning based on their unique needs.
 
@@ -29,7 +29,7 @@ Our project tackles this challenge by offering a platform with rich analytics, i
 
 The final **WeatherWise SG** Shiny Application consists of three core modules:
 
-1.  **Time Series Data Analysis**: Exploratory and Confirmatory Data Analysis
+1.  **Time Series Data Analysis**:
 
     -   Exploratory and comparative data analysis to uncover trends in temperature, rainfall, and wind across regions and seasons.
 
@@ -39,13 +39,13 @@ The final **WeatherWise SG** Shiny Application consists of three core modules:
 
 2.  **Time Series Forecasting**
 
-    -   STL: Split data into trend, seasonal and residuals.
+    -   Time Series Decomposition: visualize trend, seasonal and residuals from the dataset.
 
-    -   ACF/PACF: Identify lags to set ARIMA/SARIMA p, q parameters.
+    -   Forecasting:
 
-    -   ADF Test: Check stationary and fine tune ARIMA/SARIMA (p,d,q)(P,D,Q).
+        -   Parameters configuration: Identify and fine tune different models' parameters
 
-    -   Benchmarking: Compare with other models – Prophet and ETS; evaluate different models using MAE, RMSE, MAPE.
+        -   Benchmarking: Compare among different models using MAE, RMSE and MAPE.
 
 3.  **Geospatial Analysis**
 

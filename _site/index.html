@@ -187,10 +187,10 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="objectives" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> Objectives</h1>
-<p>Our project tackles this challenge by offering a platform with rich analytics, interactive visualizations, and predictive tools tailored to Singapore’s context. This empowers businesses, researchers, and policymakers to make timely, strategic, and informed decisions, contributing to national climate resilience and smarter urban development.The project focuses on three main objectives:</p>
+<p>Our project tackles this challenge by offering a platform with rich analytics, interactive visualizations, and predictive tools tailored to Singapore’s context. The project focuses on three main objectives:</p>
 <ol type="1">
 <li><p><strong>Build a Comprehensive Weather Analytics Platform:</strong> Integrate historical weather data from the Meteorological Service Singapore; covering temperature, rainfall, and wind, organized by station and time for easy access and analysis.</p></li>
-<li><p><strong>Develop Advanced Visual Analytics:</strong> Offer interactive time series and geospatial visualizations—such as trend lines, heat maps, forecasting, and spatial interpolation - using robust statistical techniques to uncover patterns, anomalies, and future conditions in Singapore’s weather.</p></li>
+<li><p><strong>Develop Advanced Visual Analytics:</strong> Offer interactive time series and geospatial visualizations using robust statistical techniques to uncover patterns, anomalies, and future conditions in Singapore’s weather.</p></li>
 <li><p><strong>Ensure Independent and Flexible Use Across Sectors:</strong> Design a user-friendly platform that supports diverse stakeholders - businesses, academics, and government agencies - with decision-making and strategic planning based on their unique needs.</p></li>
 </ol>
 </section>
@@ -198,7 +198,7 @@ ul.task-list li input[type="checkbox"] {
 <h1 data-number="3"><span class="header-section-number">3</span> Main Features</h1>
 <p>The final <strong>WeatherWise SG</strong> Shiny Application consists of three core modules:</p>
 <ol type="1">
-<li><p><strong>Time Series Data Analysis</strong>: Exploratory and Confirmatory Data Analysis</p>
+<li><p><strong>Time Series Data Analysis</strong>:</p>
 <ul>
 <li><p>Exploratory and comparative data analysis to uncover trends in temperature, rainfall, and wind across regions and seasons.</p></li>
 <li><p>Visualization of seasonal/weather trends and inter-region comparisons.</p></li>
@@ -206,10 +206,12 @@ ul.task-list li input[type="checkbox"] {
 </ul></li>
 <li><p><strong>Time Series Forecasting</strong></p>
 <ul>
-<li><p>STL: Split data into trend, seasonal and residuals.</p></li>
-<li><p>ACF/PACF: Identify lags to set ARIMA/SARIMA p, q parameters.</p></li>
-<li><p>ADF Test: Check stationary and fine tune ARIMA/SARIMA (p,d,q)(P,D,Q).</p></li>
-<li><p>Benchmarking: Compare with other models – Prophet and ETS; evaluate different models using MAE, RMSE, MAPE.</p></li>
+<li><p>Time Series Decomposition: visualize trend, seasonal and residuals from the dataset.</p></li>
+<li><p>Forecasting:</p>
+<ul>
+<li><p>Parameters configuration: Identify and fine tune different models’ parameters</p></li>
+<li><p>Benchmarking: Compare among different models using MAE, RMSE and MAPE.</p></li>
+</ul></li>
 </ul></li>
 <li><p><strong>Geospatial Analysis</strong></p>
 <ul>
